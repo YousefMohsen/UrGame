@@ -8,7 +8,7 @@ class App extends Component {
   constructor(props) {
     super()
     this.state = {
-      enterGame: false
+      enterGame: true
     }
 
 
@@ -17,19 +17,18 @@ class App extends Component {
 
   renderContent() {
     if (this.state.enterGame) {
-      return <Game />
+      return <Game goBack={() => { this.setState({ enterGame: false }) }} />
     }
     else {
 
       return (
         <React.Fragment>
+          <img className="App-logo" src="w-stone.png"/>
 
-
-          <Heading strong={true}
-            uppercase={true}
-            truncate={false}>
+            <h1 style={{ display: 'block' }}>
             The Royale Game Of Ur
-</Heading>
+  
+               </h1>
 
           <Button
             color="white"
