@@ -19,27 +19,21 @@ class App extends Component {
     if (this.state.enterGame) {
       return <Game goBack={() => { this.setState({ enterGame: false }) }} />
     }
-    else {
+    return (
+      <React.Fragment>
+        <img className="App-logo" src="w-stone.png" />
 
-      return (
-        <React.Fragment>
-          <img className="App-logo" src="w-stone.png"/>
+        <h1 style={{ display: 'block' }}>The Royale Game Of Ur </h1>
 
-            <h1 style={{ display: 'block' }}>
-            The Royale Game Of Ur
-  
-               </h1>
+        <Button
+          color="white"
+          primary={true}
+          label="Start Game"
+          onClick={() => { this.setState({ enterGame: true }) }}
+        />
+      </React.Fragment>
 
-          <Button
-            color="white"
-            primary={true}
-            label="Start Game"
-            onClick={() => { this.setState({ enterGame: true }) }}
-          />
-        </React.Fragment>
-
-      )
-    }
+    )
   }
   render() {
     const content = this.renderContent()
