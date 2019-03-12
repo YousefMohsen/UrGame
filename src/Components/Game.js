@@ -47,7 +47,7 @@ class Game extends Component {
                 name: 'Messi'
             },
             selectedStone: false,
-            diceResult: null,
+            diceResult: 0,
             humanDidRollDice: false
         }
 
@@ -102,7 +102,6 @@ class Game extends Component {
                     onClick={this.rollDice.bind(this)}
                 />
                 <h2>{this.state.diceResult}</h2>
-                <p>selectedStone: {this.state.selectedStone}</p>
 
                 {this.state.gameState && <p>{this.state.gameState.currentPlayer === 'w' ? 'your' : 'computer'} turn</p>}
             </div>
@@ -118,26 +117,34 @@ class Game extends Component {
             this.setState({ humanDidRollDice: true, diceResult: this.state.gameState.diceResult })
         }
     }
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.gameState !== this.state.gameState && this.state.gameState.currentPlayer === 'b') {
+            this.makeAIMove();
+        }
+
+    }
 
     makeAIMove() {
-
         const currenGameState = this.state.gameState;
         if (!currenGameState.winner) {
 
             const move = this.ai.calculateMove(currenGameState);
-console.log('Ai move ',move)
+            console.log('Ai move ', move)
             const newState = this.gameEngine.takeTurn(BLACK, move);
             console.log('new state')
-            if (newState ) {
-                if( newState.currentPlayer===BLACK){
-                    //Ai plays again
-                    this.makeAIMove();
-                }
-                this.setState({ gameState: newState,diceResult: currenGameState.diceResult });
+            if (newState) {
+                /* if (newState.currentPlayer === BLACK) {
+                     //Ai plays again
+                     this.makeAIMove();
+                     
+                 }*/
+                this.setState({ gameState: newState, diceResult: currenGameState.diceResult });
                 //human turn
                 return true;
             }
-            console.log('makeAIMove failed',newState,'currentState',currenGameState)
+            console.log('makeAIMove failed', newState, 'currentState', currenGameState)
+            alert('Ai move failed')
+
             return false;
 
         }
@@ -147,7 +154,7 @@ console.log('Ai move ',move)
     }
 
     endHumanTurn() {
-        this.setState({ selectedStone: null, humanDidRollDice: false  });
+        this.setState({ selectedStone: null, humanDidRollDice: false });
     }
     makeHumanMove(move) {
         const currenGameState = this.state.gameState;
@@ -156,14 +163,16 @@ console.log('Ai move ',move)
             const newState = this.gameEngine.takeTurn(WHITE, move);
             console.log('new state')
             if (newState) {
-                this.setState({ gameState: newState});
+                this.setState({ gameState: newState });
                 this.endHumanTurn(newState);
-                if(!newState.currentPlayer!==WHITE ){
-                    this.makeAIMove();
+                if (newState.currentPlayer === BLACK) {
+                    // this.makeAIMove();
                 }
 
                 return true;
             }
+            alert('false state')
+            console.log('false StatecurrenGameState', currenGameState)
             return false;
 
 
@@ -200,7 +209,7 @@ console.log('Ai move ',move)
             const squareIndex = parseInt(square.replace('b', '').replace('w', ''));
             const gameState = this.state.gameState;
             const selectedStone = this.state.selectedStone;// ? parseInt(this.state.selectedStone): null;
-            console.log('gameState.board[squareIndex][WHITE] ',gameState.board[squareIndex] )
+            console.log('gameState.board[squareIndex][WHITE] ', gameState.board[squareIndex])
             if (gameState.board[squareIndex][WHITE] === 1) {// check if square already has stone
                 console.log('in gameState.board[squareIndex][WHITE] === 1')
                 this.selectStone(squareIndex)
@@ -208,7 +217,7 @@ console.log('Ai move ',move)
             }
 
 
-            if (squareIndex <= selectedStone && gameState.board[squareIndex][WHITE]>0) {//check if squareIndex is before selected square  
+            if (squareIndex <= selectedStone && gameState.board[squareIndex][WHITE] > 0) {//check if squareIndex is before selected square  
                 this.selectStone(squareIndex)
                 return;
             }
@@ -234,7 +243,7 @@ console.log('Ai move ',move)
                     console.log('move from', selectedStone, 'moveto', squareIndex);
 
                 }
-                else if ((!selectedStone || selectedStone > 16 ) && gameState.board[squareIndex][WHITE]>0) {// if no stone selected
+                else if ((!selectedStone || selectedStone > 16) && gameState.board[squareIndex][WHITE] > 0) {// if no stone selected
                     console.log('no stone selected', selectedStone)
                     this.selectStone(squareIndex)
                 }
@@ -275,8 +284,8 @@ console.log('Ai move ',move)
                         }
 
 
-                        stonesOnBoard.push(stonesOnBoard.push(<img id="messi" src={"w-stone.png"} style={{ ...position, position: 'absolute', width: '50px', height: '50px', zIndex: '100' }} />)
-                        )
+                        stonesOnBoard.push(<img onClick={() => this.onSquareClick('' + index)} src={"w-stone.png"} style={{ ...position, position: 'absolute', width: '50px', height: '50px', zIndex: '100' }} />)
+
                     }
                     if (field.b > 0) {
                         const positionReference = index <= 4 || index >= 13 ? 'b' + index : index;
@@ -292,9 +301,8 @@ console.log('Ai move ',move)
                             }
                         }
 
+                        stonesOnBoard.push(<img onClick={() => this.onSquareClick('' + index)} src={"b-stone.png"} style={{ ...position, position: 'absolute', width: '50px', height: '50px', zIndex: '100' }} />)
 
-                        stonesOnBoard.push(stonesOnBoard.push(<img id="messi" src={"b-stone.png"} style={{ ...position, position: 'absolute', width: '50px', height: '50px', zIndex: '100' }} />)
-                        )
 
                     }
 
