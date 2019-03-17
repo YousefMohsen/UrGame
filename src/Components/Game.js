@@ -52,7 +52,7 @@ class Game extends Component {
             computerDice: 0
         }
 
-        this.ai = new RandomAI();
+        
 
     }
     componentDidMount() {
@@ -60,6 +60,19 @@ class Game extends Component {
             this.gameEngine = new GameEngine;
             let state = this.gameEngine.getState();
             this.setState({ gameState: state });
+        }
+
+        switch(this.props.aiType){
+            case 'nabu':
+            this.ai = new RandomAI();//implement nabu
+            break;
+            case 'gilgamesh':
+            this.ai = new GilgameshAI();
+            break;
+            case 'random':
+            this.ai = new RandomAI();
+            break;
+
         }
 
     }
@@ -383,13 +396,14 @@ class Game extends Component {
 
     render() {
         console.log('render.this.state', this.state)
+        console.log('this.props.aiType',this.props.aiType)
         const stonesOnBoard = this.positionDicesOnBoard();
         return (
             <div className="game-container">
                 <Button
                     color="white"
                     primary={true}
-                    label="Back"
+                    label="Start over"
                     onClick={this.props.goBack}
                     style={{ position: 'absolute', left: '14px', top: '14px' }}
                 />
