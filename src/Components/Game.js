@@ -199,14 +199,9 @@ class Game extends Component {
             //this.setState({computerDice: currenGameState.diceResult})
             const move = this.ai.calculateMove(currenGameState);
             // console.log('Ai move ', move)
-            const newState = this.gameEngine.takeTurn(BLACK, move);
+         /*   const newState = this.gameEngine.takeTurn(BLACK, move);
             // console.log('new state')
             if (newState) {
-                /* if (newState.currentPlayer === BLACK) {
-                     //Ai plays again
-                     this.makeAIMove();
-                     
-                 }*/
                 this.setState({ gameState: newState, computerDice: currenGameState.diceResult });
                 //human turn
                 return true;
@@ -214,7 +209,7 @@ class Game extends Component {
             console.log('makeAIMove failed', newState, 'currentState', currenGameState)
             alert('Ai move failed')
 
-            return false;
+            return false;*/
 
         }
         else {
@@ -278,7 +273,7 @@ class Game extends Component {
             const squareIndex = parseInt(square.replace('b', '').replace('w', ''));
             const gameState = this.state.gameState;
             const selectedStone = this.state.selectedStone;// ? parseInt(this.state.selectedStone): null;
-            console.log('gameState.board[squareIndex][WHITE] ', gameState.board[squareIndex])
+            //console.log('gameState.board[squareIndex][WHITE] ', gameState.board[squareIndex])
             if (gameState.board[squareIndex][WHITE] === 1 && squareIndex != 15) {// check if square already has stone
                 //    console.log('in gameState.board[squareIndex][WHITE] === 1')
                 this.selectStone(squareIndex)
@@ -297,7 +292,7 @@ class Game extends Component {
                     //console.log('in if selectedstone')
 
                     // console.log('\nstate.possibleMoves', gameState.possibleMoves)
-                    console.log('gameState.possibleMoves[this.state.selectedStone] =', gameState.possibleMoves[selectedStone], 'squareIndex', squareIndex)
+                   // console.log('gameState.possibleMoves[this.state.selectedStone] =', gameState.possibleMoves[selectedStone], 'squareIndex', squareIndex)
                     if (gameState.possibleMoves[selectedStone] === squareIndex) {
                         const moveFrom = selectedStone;
                         this.makeHumanMove(moveFrom)
@@ -395,8 +390,8 @@ class Game extends Component {
     }
 
     render() {
-        console.log('render.this.state', this.state)
-        console.log('this.props.aiType',this.props.aiType)
+     //   console.log('render.this.state', this.state)
+       // console.log('this.props.aiType',this.props.aiType)
         const stonesOnBoard = this.positionDicesOnBoard();
         return (
             <div className="game-container">

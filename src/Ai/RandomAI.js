@@ -14,7 +14,6 @@ return Object.keys(state.possibleMoves)[rand];
 
 }
 
-RandomAI.messi="er gud"
 export default RandomAI;
 
 

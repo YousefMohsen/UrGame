@@ -11,11 +11,11 @@ const boardLayout = [
     [[13, 'w'], [12], [13, 'b']],
     [[14, 'w'], [11], [14, 'b']],
     [[15, 'w'], [10], [15, 'b']],
-    [[0,  'w'], [9],  [0,  'b']],
-    [[1,  'w'], [8],  [1,  'b']],
-    [[2,  'w'], [7],  [2,  'b']],
-    [[3,  'w'], [6],  [3,  'b']],
-    [[4,  'w'], [5],  [4,  'b']]
+    [[0, 'w'], [9], [0, 'b']],
+    [[1, 'w'], [8], [1, 'b']],
+    [[2, 'w'], [7], [2, 'b']],
+    [[3, 'w'], [6], [3, 'b']],
+    [[4, 'w'], [5], [4, 'b']]
 ];
 
 function otherPlayer(player) {
@@ -55,9 +55,9 @@ function possibleMoves(player, diceResult, board) {
     return board.reduce((moves, stones, field) => {
         if (!stones.get(player) || diceResult === 0) return moves;
         const dest = field + diceResult;
-        if(isMoveLegal(player, dest, board)) {
+        if (isMoveLegal(player, dest, board)) {
             return moves.set(field.toString(), dest);
-        } else if(SAFE_SHARED_FIELDS.has(dest) && !!board.get(dest).get(otherPlayer(player))
+        } else if (SAFE_SHARED_FIELDS.has(dest) && !!board.get(dest).get(otherPlayer(player))
             && isMoveLegal(player, dest + 1, board)) {
             return moves.set(field.toString(), dest + 1)
         } else {
@@ -85,7 +85,7 @@ function moveStone(player, from, to, board) {
 function makeMove(player, from, to, board) {
     to = typeof to === 'number' ? to : parseInt(to);
     const newBoard = moveStone(player, from, to, board);
-    if(SHARED_FIELDS.has(to) && newBoard.get(to).get(otherPlayer(player)) > 0) {//if moves kills otherplayer
+    if (SHARED_FIELDS.has(to) && newBoard.get(to).get(otherPlayer(player)) > 0) {//if moves kills otherplayer
         return moveStone(otherPlayer(player), to, START, newBoard);
     }
     return newBoard;
@@ -93,7 +93,7 @@ function makeMove(player, from, to, board) {
 
 function startTurn(player, numDice, board) {
     const dice = rollDice(numDice);
-    const  diceRoll = diceResult(dice);
+    const diceRoll = diceResult(dice);
     return new Map({
         currentPlayer: player,
         dice: dice,
@@ -129,7 +129,6 @@ function voidTurn(player, state) {
         ? startTurn(otherPlayer(player), state.get('dice').size, state.get('board'))
         : false;
 }
-
 class GameEngine {
     constructor(numStones, numDice, player) {
         this._state = startGame(numStones, numDice, player);
@@ -167,7 +166,7 @@ class GameEngine {
         return GameEngine._stateToJs(endTurn(player, selectedField, fromJS(state)));
     }
 
-     prettifyState(uglyState) {
+    prettifyState(uglyState) {
         const prettyBoard = boardLayout.map(row => row.map(cell => {
             let [cellIndex, player] = cell;
             const boardCell = uglyState.board[cellIndex];
@@ -189,10 +188,10 @@ class GameEngine {
         return Object.assign({}, uglyState, { board: prettyBoard });
     }
 
-     uglifyState(prettyState) {
+    uglifyState(prettyState) {
         const uglyBoard = new Array(FINISH + 1).fill().map(() => ({ w: 0, b: 0 }));
         prettyState.board.forEach(row => row.forEach(cell => {
-            if(cell.player) uglyBoard[cell.cell][cell.player] = cell.stones;
+            if (cell.player) uglyBoard[cell.cell][cell.player] = cell.stones;
         }));
         return Object.assign({}, prettyState, { board: uglyBoard });
     }
@@ -202,8 +201,31 @@ class GameEngine {
         return state;
     }
 }
-GameEngine.BLACK = 'b';
-GameEngine.WHITE = 'w';
 
-module.exports = GameEngine;
+class GameSimulator {
+    getPossibleMoves(player, diceResult, board) {
+        return possibleMoves(player, diceResult, board);
+    }
+
+
+    getPossibleState(state, player, selectedField, diceRoll) {
+        //console.log('\nin getPossibleState',state, player, selectedField,diceRoll,'\n')
+        let newState = GameEngine._stateToJs(endTurn(player, selectedField, fromJS(state)));
+
+        //console.log('\nnewState:before',newState)
+        if (newState) {
+            newState.possibleMoves = this.getPossibleMoves(newState.currentPlayer, diceRoll, fromJS(newState.board)).toJS();
+            newState.diceResult = diceRoll;
+            // delete newState.dice;
+        }
+        // console.log('\nnewState:after',newState)
+
+        return newState;
+    }
+}
+
+
+module.exports = GameSimulator;
+
 //export default GameEngine;
+
