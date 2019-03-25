@@ -6,7 +6,11 @@ import GilgameshAI from '../Ai/GilgameshAI'
 import RandomAI from '../Ai/RandomAI'
 
 import './Game.css'
+
+//const GilgameshAI = require('../Ai/GilgameshAI');
+
 import GameEngine from '../GameEngine';
+//const GameEngine = require('../GameEngine');
 
 const initialState = {
     currentPlayer: 'w',
@@ -198,8 +202,9 @@ class Game extends Component {
         if (!currenGameState.winner) {
             //this.setState({computerDice: currenGameState.diceResult})
             const move = this.ai.calculateMove(currenGameState);
+            console.log('ai move',move)
             // console.log('Ai move ', move)
-         /*   const newState = this.gameEngine.takeTurn(BLACK, move);
+           const newState = this.gameEngine.takeTurn(BLACK, move);
             // console.log('new state')
             if (newState) {
                 this.setState({ gameState: newState, computerDice: currenGameState.diceResult });
@@ -209,7 +214,7 @@ class Game extends Component {
             console.log('makeAIMove failed', newState, 'currentState', currenGameState)
             alert('Ai move failed')
 
-            return false;*/
+            return false;
 
         }
         else {

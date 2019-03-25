@@ -227,5 +227,5 @@ class GameSimulator {
 
 module.exports = GameSimulator;
 
-//export default GameEngine;
+//export default GameSimulator;
 

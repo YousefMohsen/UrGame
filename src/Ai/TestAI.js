@@ -28,15 +28,15 @@ board:
    { w: 0, b: 0 } ] } //# 15 scoring stone
 */
 // Ur(stones?: number, dice?: number, player?: string)
-//const game = new Ur(7,4,Ur.BLACK);
+const game = new Ur(7, 4, Ur.BLACK);
 // default: stones = 7, dice = 4, player = Ur.WHITE
 const gameSimulator = new GameSimulator();
-//let state = game.getState();
+let state = game.getState();
 //console.log(JSON.stringify(state))
 //state =game.takeTurn(state.currentPlayer,0) 
 //state =game.takeTurn(state.currentPlayer,0) 
 
-let initState = require('./initState.json');
+//let initState = require('./initState.json');
 //console.log('firststate',initState)
 
 
@@ -47,15 +47,25 @@ let initState = require('./initState.json');
 //let possibleState  = gameSimulator.getPossibleState(state,state.currentPlayer,0,4);
 
 //console.log('possibleState',possibleState)
+/*for (let index = 0; index <20; index++) {
+    const rand = Math.floor(Math.random() * Object.keys(state.possibleMoves).length);
+    
+    state =game.takeTurn(state.currentPlayer,Object.keys(state.possibleMoves)[rand]) 
+     
+}*/
 
-
-
-
-const tree = buildTree(initState,2)
+//console.log('state',state)
+testAgainstRandomPlayer(1)
+//const tree = buildTree(state,2)
 //console.log('tree',tree)
 var fs = require('fs');
+const ai = new GilgameshAI();
+//console.log('initState:before',initState)
 
-fs.writeFile('./src/Ai/generatedTree.json', JSON.stringify(tree), { flag: 'w' }, function(err) {
+//const move = ai.calculateMove(state);
+//console.log('move',move);
+//console.log('initState:after',initState)
+fs.writeFile('./src/Ai/initState.json', JSON.stringify(state), { flag: 'w' }, function (err) {
     if (err) {
         console.log(err);
     }
@@ -67,9 +77,9 @@ fs.writeFile('./src/Ai/generatedTree.json', JSON.stringify(tree), { flag: 'w' },
 
 //printChildren(tree.root)
 
-function printChildren(node){
-    node.children.map((child,i)=>{
-        console.log('\n\nchild', i,'of ',node.depth,child.gameState,'\n\n')
+function printChildren(node) {
+    node.children.map((child, i) => {
+        console.log('\n\nchild', i, 'of ', node.depth, child.gameState, '\n\n')
         printChildren(child);
     });
 }
@@ -90,22 +100,58 @@ function printChildren(node){
 // state.possibleMoves -> { '0': 3 }
 //console.log('s0state',state);
 //console.log('\ntate.diceResult',state.diceResult,'\n')
-/*let lopX = 0;
-while(!state.winner){
-    lopX++;
 
-    if(!state.possibleMoves){
-        console.log('\nDidnt find any possibleMoves!',state.possibleMoves,'\n')
+function testAgainstRandomPlayer(games) {
+    let blackWins = 0;
+    let whiteWins = 0;
+
+    const ai = new GilgameshAI();
+
+
+    for (let index = 0; index < games; index++) {
+
+        const game = new Ur(7, 4, Ur.BLACK);
+        let state = game.getState();
+
+        let lopX = 0;
+        while (!state.winner) {
+            //    lopX++;
+            console.log('\nstate:before', state);
+
+
+            if (!state.possibleMoves) {
+                console.log('\nDidnt find any possibleMoves!', state.possibleMoves, '\n')
+            }
+            if (state.diceResult > 0 && Object.keys(state.possibleMoves).length > 0) {
+                const rand = Math.floor(Math.random() * Object.keys(state.possibleMoves).length);
+                const move = state.currentPlayer === 'b' ? ai.calculateMove(state) : Object.keys(state.possibleMoves)[rand];
+                state = game.takeTurn(state.currentPlayer, move)
+
+            }
+            else {
+                state = game.voidTurn(state.currentPlayer);
+
+            }
+
+            // or game.takeTurn('w', 0);
+
+        }
+
+        if (state.winner === 'w') {
+            whiteWins++;
+        }
+        else if (state.winner === 'b') {
+            blackWins++;
+        }
+        //console.log('Winner is:',state.winner)
+
+
     }
-    const rand = Math.floor(Math.random() * Object.keys(state.possibleMoves).length);
 
-    
-    state =game.takeTurn(state.currentPlayer,Object.keys(state.possibleMoves)[rand]) 
-    
-    // or game.takeTurn('w', 0);
-    console.log('\nstate',state);
+    console.log(games, 'games played. \nBlack won::', blackWins, '\nwhite won:', whiteWins)
 
-}*/
+}
+
 //console.log('state.possibleMoves',console.log(Object.keys(state.possibleMoves)[0] ) )
 // takeTurn(player: string, move?: string | number)
 // returns false on invalid input

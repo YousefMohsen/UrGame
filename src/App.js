@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-//import Game from './Components/Game'
+import Game from './Components/Game'
 import { Button, Heading } from 'grommet';
 import Graph from 'react-graph-vis'
 
@@ -38,7 +38,7 @@ class App extends Component {
     }
 
     if (this.state.enterGame) {
-      return 'messi'// <Game aiType={this.state.aiType} goBack={() => { this.setState({ enterGame: false, enterAIMenu: false }) }} />
+      return <Game aiType={this.state.aiType} goBack={() => { this.setState({ enterGame: false, enterAIMenu: false }) }} />
     }
     if (this.state.enterAIMenu) {
       return (
