@@ -30,16 +30,61 @@ function boardUtility(state, aiColor = "b") {
   const board = state.board;
   board.map((square, index) => {
     if (square[aiColor] > 0 && index > 0) {
-      utility += square[aiColor] * (index / 15);
+      utility += square[aiColor] * (index / 20);
     }
   });
   if (board[8][aiColor]) {
-    utility += 0.3;
+    utility += 0.8;
   }
+  if (board[4][aiColor]) {
+    utility += 0.4;
+  }
+
   //console.log('utility',utility)
+return utility;
 }
+function boardUtilityCompare(state,parentState,aiColor = "b") {
+    //console.log('ai color')
+    let utility = 0.1;
+    const board = state.board;
+    const parentBoard = parentState.board;
+    const enemyColor = aiColor === "b" ? "w":"b";
+    for (let index = 1; index < board.length; index++) {
+        let parentSquare = parentBoard[index];
+        let boardSquare = board[index]
+     //   console.log('boardSquare',boardSquare)
+        if (boardSquare[aiColor] > 0  && (parentSquare[aiColor] === 0) ) {
+            if(index>4 &&index<13){
+                utility +=  (index / 13);
+
+            }
+         
+        if(index===8){
+            utility+=0.8;
+        }
+        if(parentSquare[enemyColor]>0&&index>4&&index<13){
+            utility+=0.9;
+
+        }
+        
+    }
+
+
+       /*   if (board[index][aiColor]>0 &&parentBoard[index][enemyColor]>0 &&index>4&&index<15) {//if landed on enemy piece
+            utility += 1.1;
+          }*/
+
+    }
+
+/*    if (board[8][aiColor]>0 &&parentBoard[8][aiColor]===0 ) {//if landed on extra turn square
+      utility += 0.7;
+    }*/
+    //console.log('utility',utility)
+  return utility;
+  }
 function utility(state, moveFrom) {
   if (state && moveFrom) {
+      
     // move= {0: '4'
     const moveTo = state.possibleMoves[moveFrom];
     // console.log('state.moveFrom',moveFrom)
@@ -63,25 +108,36 @@ function utility(state, moveFrom) {
       // console.log('\n\n\n\n')
       // console.log('in board[moveFrom][player]==1!!!')
       // We aren't on the board yet, and it's always nice to add more to the board to open up more options.
-      utility += 0.2;
+    //    utility += 0.2;
     }
-    if (moveFrom === "8") {
+    if (moveFrom === "8"|| moveFrom ===8) {
       // We are sitting on a roll-again space in the middle.  Let's resist moving just because
       // it blocks the space from our opponent
-      utility -= 0.1;
+      utility -= 0.6;
     }
-    if (moveTo === 4 || moveTo === 8 || moveTo === 14) {
+    if (moveTo === 8 ) {
       //if extra turn stones
-      utility += 0.5;
+      //console.log('moveto==8')
+      utility += 1.3;
     }
+    if (moveTo === 4 ) {
+        //if extra turn stones
+        utility += 0.8;
+      }
+      if ( moveTo === 14) {
+        //if extra turn stones
+        utility += 0.3;
+      }
+   // console.log('board[moveTo][enemy]',board[moveTo][enemy]);
     if (board[moveTo][enemy] === 1) {
       //if enemhy stone on moveto square
-      utility += 0.5;
+      utility += 1.9;
     }
 
     if (moveTo === 15) {
+     //   console.log('moveto==15')
       //if finish square //TODO: only add extra points if stone is in danger
-      utility += 0.2;
+      utility += 0.4;
     }
     if (state.currentPlayer === "w") {
       return (utility = -1 * utility);
@@ -152,8 +208,10 @@ class Node {
       return this.nodeType;
     } else if (!this.parent) {
       return IS_MAX_NODE;
-    } else if (
+    } 
+    else if (
       this.gameState.currentPlayer === "w" &&
+      this.parent.gameState.currentPlayer === "w"&&
       this.parent.nodeType === IS_CHANCE_NODE
     ) {
       return IS_MIN_NODE;
@@ -172,9 +230,12 @@ class Node {
     switch (this.nodeType) {
       case IS_Terminal_NODE:
         ///terminal or maxdepth reached
-        //  const ut = utility(this.parent.gameState, this.move); //move: move from parent,
+         //const ut = utility(this.parent.gameState, this.move); //move: move from parent,
 
-        const ut = boardUtility(this.gameState);
+        const ut = boardUtility(this.gameState); 
+      //const ut = boardUtilityCompare(this.gameState,this.parent.gameState);
+
+        //
         //  console.log('in else this.maxDepth >= this.depth ,this. ',  this.gameState.possibleMoves)
         // console.log('ut',ut)
         if (!ut) {

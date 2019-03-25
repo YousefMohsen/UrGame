@@ -10,23 +10,24 @@ dice: [ 0, 1, 1, 0 ],
 diceResult: 2,
 possibleMoves: { '0': 1, '2': 3 },
 board: 
- [ { w: 4, b: 0 },
-   { w: 0, b: 0 },
-   { w: 1, b: 0 },
-   { w: 0, b: 0 },
+ [ { w: 4, b: 5 },//0
+   { w: 0, b: 0 },//1
+   { w: 0, b: 0 },//2
+   { w: 1, b: 0 },//3
    { w: 1, b: 0 },//#4 holy
-   { w: 0, b: 0 },
-   { w: 0, b: 0 },
-   { w: 1, b: 1 },
-   { w: 0, b: 0 },
-   { w: 0, b: 0 },
-   { w: 0, b:1 },
-   { w: 0, b: 0 },
-   { w: 0, b: 0 },
-   { w: 0, b: 1 },
-   { w: 0, b: 3 },
-   { w: 0, b: 1 } ] } //# 15 scoring stone
-//boardUtility(initState);
+   { w: 0, b: 0 },//5
+   { w: 0, b: 1 },//6
+   { w: 1, b: 0 },//7
+   { w: 0, b: 0 },//8
+   { w: 0, b: 0 },//9
+   { w: 0, b:1 },//10
+   { w: 0, b: 0 },//11
+   { w: 0, b: 0 },//12
+   { w: 0, b: 0 },//13
+   { w: 0, b: 0 },//14
+   { w: 1, b: 0 } ] } //# 15 scoring stone
+
+//boardUtility(parentState,initState);
 
 // Ur(stones?: number, dice?: number, player?: string)
 const game = new Ur(7, 4, Ur.BLACK);
@@ -74,7 +75,13 @@ const move = ai.calculateMove(state);
 console.log('move',move);
 
 }
-testAgainstRandomPlayer(50)
+for (let index = 0; index < 10; index++) {
+  //  const element = array[index];
+ // testAgainstRandomPlayer(100,index)
+ 
+}
+
+testAgainstRandomPlayer(10,3)
 
 //oneMove()
 //console.log('state',state)
@@ -119,11 +126,11 @@ function printChildren(node) {
 //console.log('s0state',state);
 //console.log('\ntate.diceResult',state.diceResult,'\n')
 
-function testAgainstRandomPlayer(games) {
+function testAgainstRandomPlayer(games,depth) {
     let blackWins = 0;
     let whiteWins = 0;
 
-    const ai = new GilgameshAI();
+    const ai = new GilgameshAI(depth);
 
 
     for (let index = 0; index < games; index++) {
@@ -168,7 +175,7 @@ function testAgainstRandomPlayer(games) {
 
     }
 
-    //console.log(games, 'games played.  AI won::', blackWins, ' Random player won:', whiteWins)
+    console.log( 'Depth: ',depth,', ', ' played games:',games,'  AI won::', blackWins, ' Random player won:', whiteWins)
 
 }
 
