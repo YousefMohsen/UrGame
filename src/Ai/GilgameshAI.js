@@ -6,7 +6,15 @@
 //const Tree = require('./Tools/Tree');
 const buildTree = require('./Tools/Tree');
 var fs = require('fs');
-
+function writeToJSON(data){
+    fs.writeFile('./src/Ai/generatedTree.json', JSON.stringify(data), { flag: 'w' }, function (err) {
+        if (err) {
+            console.log(err);
+        }
+        console.log('File Saved!');
+    
+    });
+}
 //import buildTree from './Tools/Tree';
 class GilgameshAI {
     constructor() {
@@ -14,17 +22,11 @@ class GilgameshAI {
     }
 
     calculateMove(state) {
-        const searchDepth = 0;
+        const searchDepth = 2;
         const tree = buildTree(state, searchDepth)
         //console.log('tree',tree)
         //console.log('tree',tree.root.children);
-       /* fs.writeFile('./src/Ai/generatedTree.json', JSON.stringify(tree), { flag: 'w' }, function (err) {
-            if (err) {
-                console.log(err);
-            }
-            console.log('File Saved!');
-        
-        });*/
+       // writeToJSON(tree)
 //console.log('tree.root.type',tree.root.nodeType)
        // tree.root.children.map((c,i)=>console.log('m',c.move,'value: ',c.value))
         //console.log('aiplayer',state.currentPlayer)

@@ -4,29 +4,30 @@ const GilgameshAI = require('./GilgameshAI');
 const buildTree = require('./Tools/Tree');
 const AI = new GilgameshAI();
 var util = require('util')
-/*
+
 const initState = { currentPlayer: 'b',
-dice: [ 0, 1, 2, 0 ],
+dice: [ 0, 1, 1, 0 ],
 diceResult: 2,
 possibleMoves: { '0': 1, '2': 3 },
 board: 
- [ { w: 4, b: 6 },
+ [ { w: 4, b: 0 },
    { w: 0, b: 0 },
    { w: 1, b: 0 },
    { w: 0, b: 0 },
    { w: 1, b: 0 },//#4 holy
    { w: 0, b: 0 },
+   { w: 0, b: 0 },
+   { w: 1, b: 1 },
+   { w: 0, b: 0 },
+   { w: 0, b: 0 },
+   { w: 0, b:1 },
+   { w: 0, b: 0 },
+   { w: 0, b: 0 },
    { w: 0, b: 1 },
-   { w: 1, b: 0 },
-   { w: 0, b: 0 },
-   { w: 0, b: 0 },
-   { w: 0, b: 0 },
-   { w: 0, b: 0 },
-   { w: 0, b: 0 },
-   { w: 0, b: 0 },
-   { w: 0, b: 0 },
-   { w: 0, b: 0 } ] } //# 15 scoring stone
-*/
+   { w: 0, b: 3 },
+   { w: 0, b: 1 } ] } //# 15 scoring stone
+//boardUtility(initState);
+
 // Ur(stones?: number, dice?: number, player?: string)
 const game = new Ur(7, 4, Ur.BLACK);
 // default: stones = 7, dice = 4, player = Ur.WHITE
@@ -45,7 +46,9 @@ let state = game.getState();
 //state =game.takeTurn(state.currentPlayer,0) 
 //state =game.takeTurn(state.currentPlayer,0) 
 //console.log('state1',state)
+//console.log('state.currentplayer',state.currentPlayer)
 //let possibleState  = gameSimulator.getPossibleState(state,state.currentPlayer,0,4);
+//console.log('possibleState.currentplayer',possibleState.currentPlayer)
 
 //console.log('possibleState',possibleState)
 
@@ -71,7 +74,7 @@ const move = ai.calculateMove(state);
 console.log('move',move);
 
 }
-testAgainstRandomPlayer(10)
+testAgainstRandomPlayer(50)
 
 //oneMove()
 //console.log('state',state)
@@ -159,12 +162,13 @@ function testAgainstRandomPlayer(games) {
         else if (state.winner === 'b') {
             blackWins++;
         }
+        console.log(index+1, 'games played.  AI won::', blackWins, ' Random player won:', whiteWins)
 
 
 
     }
 
-    console.log(games, 'games played.  AI won::', blackWins, ' Random player won:', whiteWins)
+    //console.log(games, 'games played.  AI won::', blackWins, ' Random player won:', whiteWins)
 
 }
 
