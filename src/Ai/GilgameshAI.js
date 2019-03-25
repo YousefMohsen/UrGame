@@ -8,16 +8,23 @@ const buildTree = require('./Tools/Tree');
 //import buildTree from './Tools/Tree';
 class GilgameshAI {
     constructor() {
-        this.color = 'b'; //assumme AI always plays with black stones. TODO: More dynamically.
+     //   this.color = 'b'; //assumme AI always plays with black stones. TODO: More dynamically.
     }
 
     calculateMove(state) {
         const searchDepth = 2;
         const tree = buildTree(state, searchDepth)
         //console.log('tree',tree)
-        //console.log('tree',tree.root.children)
-        console.log('aiplayer',state.currentPlayer)
-        const max = tree.root.children.reduce((prev, current) => (prev.value > current.value) ? prev : current);
+        //console.log('tree',tree.root.children);
+       /* fs.writeFile('./src/Ai/initState.json', JSON.stringify(state), { flag: 'w' }, function (err) {
+            if (err) {
+                console.log(err);
+            }
+            console.log('File Saved!');
+        
+        });*/
+        //console.log('aiplayer',state.currentPlayer)
+        const max = tree.root.children.reduce((prev, current) => (prev.value < current.value) ? prev : current);
         return max.move;
         /*
         console.log('in gilgamesh calcMove', state);

@@ -164,7 +164,7 @@ class Node {
             //  console.log('in else this.maxDepth >= this.depth ,this. ',  this.gameState.possibleMoves)
          // console.log('ut',ut)
          if(!ut){
-             console.log('ut i null, this.node',this)
+        //     console.log('ut i null, this.node',this.nodeType,'posiblemove',this.gameState.possibleMoves)
          }   
          return ut;
             //this.utility = ut;

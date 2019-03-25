@@ -55,7 +55,6 @@ let state = game.getState();
 }*/
 
 //console.log('state',state)
-testAgainstRandomPlayer(1)
 //const tree = buildTree(state,2)
 //console.log('tree',tree)
 var fs = require('fs');
@@ -65,13 +64,13 @@ const ai = new GilgameshAI();
 //const move = ai.calculateMove(state);
 //console.log('move',move);
 //console.log('initState:after',initState)
-fs.writeFile('./src/Ai/initState.json', JSON.stringify(state), { flag: 'w' }, function (err) {
+/*fs.writeFile('./src/Ai/initState.json', JSON.stringify(state), { flag: 'w' }, function (err) {
     if (err) {
         console.log(err);
     }
     console.log('File Saved!');
 
-});
+});*/
 //console.log('tree',util.inspect(tree))
 
 
@@ -100,6 +99,7 @@ function printChildren(node) {
 // state.possibleMoves -> { '0': 3 }
 //console.log('s0state',state);
 //console.log('\ntate.diceResult',state.diceResult,'\n')
+testAgainstRandomPlayer(50)
 
 function testAgainstRandomPlayer(games) {
     let blackWins = 0;
@@ -116,7 +116,7 @@ function testAgainstRandomPlayer(games) {
         let lopX = 0;
         while (!state.winner) {
             //    lopX++;
-            console.log('\nstate:before', state);
+           // console.log('\nstate:before', state);
 
 
             if (!state.possibleMoves) {
@@ -124,7 +124,7 @@ function testAgainstRandomPlayer(games) {
             }
             if (state.diceResult > 0 && Object.keys(state.possibleMoves).length > 0) {
                 const rand = Math.floor(Math.random() * Object.keys(state.possibleMoves).length);
-                const move = state.currentPlayer === 'b' ? ai.calculateMove(state) : Object.keys(state.possibleMoves)[rand];
+                const move =  state.currentPlayer === 'b' ? ai.calculateMove(state) : Object.keys(state.possibleMoves)[rand];
                 state = game.takeTurn(state.currentPlayer, move)
 
             }
@@ -148,7 +148,7 @@ function testAgainstRandomPlayer(games) {
 
     }
 
-    console.log(games, 'games played. \nBlack won::', blackWins, '\nwhite won:', whiteWins)
+    console.log(games, 'games played.  Black won::', blackWins, ' white won:', whiteWins)
 
 }
 
