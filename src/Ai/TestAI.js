@@ -39,6 +39,7 @@ let state = game.getState();
 //let initState = require('./initState.json');
 //console.log('firststate',initState)
 
+//const gameSimulator = new GameSimulator();
 
 // takeTurn(state: Object, player: string, move?: string | number)
 //state =game.takeTurn(state.currentPlayer,0) 
@@ -47,22 +48,37 @@ let state = game.getState();
 //let possibleState  = gameSimulator.getPossibleState(state,state.currentPlayer,0,4);
 
 //console.log('possibleState',possibleState)
-/*for (let index = 0; index <20; index++) {
-    const rand = Math.floor(Math.random() * Object.keys(state.possibleMoves).length);
-    
-    state =game.takeTurn(state.currentPlayer,Object.keys(state.possibleMoves)[rand]) 
-     
-}*/
 
+function oneMove(){
+    const ai = new GilgameshAI();
+    const game = new Ur(7, 4, Ur.BLACK);
+    // default: stones = 7, dice = 4, player = Ur.WHITE
+    let state = game.getState();
+
+    for (let index = 0; index <20; index++) {
+     
+    }
+//console.log('initState:before',initState)
+let counter =0;
+while(!(counter>20 &&state.currentPlayer==='b' )){
+    const rand = Math.floor(Math.random() * Object.keys(state.possibleMoves).length);
+        
+    state =game.takeTurn(state.currentPlayer,Object.keys(state.possibleMoves)[rand]) 
+    counter++;
+}
+console.log('state.currentPlayer',state.currentPlayer)
+const move = ai.calculateMove(state);
+console.log('move',move);
+
+}
+testAgainstRandomPlayer(10)
+
+//oneMove()
 //console.log('state',state)
 //const tree = buildTree(state,2)
 //console.log('tree',tree)
-var fs = require('fs');
-const ai = new GilgameshAI();
-//console.log('initState:before',initState)
+//var fs = require('fs');
 
-//const move = ai.calculateMove(state);
-//console.log('move',move);
 //console.log('initState:after',initState)
 /*fs.writeFile('./src/Ai/initState.json', JSON.stringify(state), { flag: 'w' }, function (err) {
     if (err) {
@@ -99,7 +115,6 @@ function printChildren(node) {
 // state.possibleMoves -> { '0': 3 }
 //console.log('s0state',state);
 //console.log('\ntate.diceResult',state.diceResult,'\n')
-testAgainstRandomPlayer(50)
 
 function testAgainstRandomPlayer(games) {
     let blackWins = 0;
@@ -110,7 +125,7 @@ function testAgainstRandomPlayer(games) {
 
     for (let index = 0; index < games; index++) {
 
-        const game = new Ur(7, 4, Ur.BLACK);
+        const game = new Ur(7, 4, Ur.WHITE);
         let state = game.getState();
 
         let lopX = 0;
@@ -137,18 +152,19 @@ function testAgainstRandomPlayer(games) {
 
         }
 
+
         if (state.winner === 'w') {
             whiteWins++;
         }
         else if (state.winner === 'b') {
             blackWins++;
         }
-        //console.log('Winner is:',state.winner)
+
 
 
     }
 
-    console.log(games, 'games played.  Black won::', blackWins, ' white won:', whiteWins)
+    console.log(games, 'games played.  AI won::', blackWins, ' Random player won:', whiteWins)
 
 }
 

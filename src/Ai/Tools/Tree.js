@@ -4,6 +4,7 @@ const gameSimulator = new GameSimulator()
 
 const IS_Terminal_NODE = 'IS_Terminal_NODE';
 const IS_MAX_NODE = 'IS_MAX_NODE';
+const IS_MIN_NODE = 'IS_MIN_NODE';
 const IS_CHANCE_NODE = 'IS_CHANCE_NODE';
 
 function getProbability(diceRoll) {
@@ -23,86 +24,86 @@ function getProbability(diceRoll) {
 }
 
 function utility(state, moveFrom) {
-    if(state &&moveFrom){
+    if (state && moveFrom) {
 
 
-    // move= {0: '4'
-    const moveTo = state.possibleMoves[moveFrom];
-   // console.log('state.moveFrom',moveFrom)
-    //console.log('state.moveTo',moveTo)
+        // move= {0: '4'
+        const moveTo = state.possibleMoves[moveFrom];
+        // console.log('state.moveFrom',moveFrom)
+        //console.log('state.moveTo',moveTo)
 
-    const board = state.board;
-    const player =state.currentPlayer// 'b';//todo
-    const enemy = player === 'w' ? 'b': 'w'
-    //console.log('player',player)
-   // console.log('enemy',enemy)
+        const board = state.board;
+        const player = state.currentPlayer// 'b';//todo
+        const enemy = player === 'w' ? 'b' : 'w'
+        //console.log('player',player)
+        // console.log('enemy',enemy)
 
-    //
-    // Utility(s, p): utility function (or payoff function). Numerica value for player p in ter
-    let utility = 0.1;
+        //
+        // Utility(s, p): utility function (or payoff function). Numerica value for player p in ter
+        let utility = 0.1;
 
 
-    //console.log('this.color', state.board[0][this.color])
+        //console.log('this.color', state.board[0][this.color])
 
-    if (board[0][player] === 7) {
-       // console.log('inUtility.state', state);
-       // console.log('movefrom, moveTo', moveFrom, moveTo)
-       // console.log('\n\n\n\n')
-       // console.log('in board[moveFrom][player]==1!!!')
-        // We aren't on the board yet, and it's always nice to add more to the board to open up more options.
-        utility += 0.20;
+        if (board[0][player] === 7) {
+            // console.log('inUtility.state', state);
+            // console.log('movefrom, moveTo', moveFrom, moveTo)
+            // console.log('\n\n\n\n')
+            // console.log('in board[moveFrom][player]==1!!!')
+            // We aren't on the board yet, and it's always nice to add more to the board to open up more options.
+            utility += 0.20;
+        }
+        if (moveFrom === '8') {
+
+            // We are sitting on a roll-again space in the middle.  Let's resist moving just because
+            // it blocks the space from our opponent
+            utility -= 0.10;
+        }
+        if (moveTo === 4 || moveTo === 8 || moveTo === 14) {//if extra turn stones
+            utility += 0.50;
+
+        }
+        if (board[moveTo][enemy] === 1) {//if enemhy stone on moveto square
+            utility += 0.50;
+        }
+
+        if (moveTo === 15) {//if finish square //TODO: only add extra points if stone is in danger
+            utility += 0.20;
+        }
+
+
+        /*
+    
+    
+       /* let currentDanger = 0;
+        if(currentTile != null)
+        {
+            currentDanger = tileDanger[currentTile];
+        }
+    
+        utility -= currentDanger ;
+    */
+        // TODO:  Add goodness for tiles that are behind enemies, and therefore likely to contribute to future boppage
+        // TODO:  Add goodness for moving a stone forward when we might be blocking friendlies
+
+        return utility;
+
     }
-    if (moveFrom === '8') {
-
-        // We are sitting on a roll-again space in the middle.  Let's resist moving just because
-        // it blocks the space from our opponent
-        utility -= 0.10;
+    else {
+        console.log('\nERRORRR!!\nmoveFrom, state\n', moveFrom, '\n', state);
+        return null;
+        /*
+            import fs = require('fs');
+        
+        fs.writeFile('./src/Ai/log.json', JSON.stringify({moveFrom: moveFrom, state: state}), { flag: 'w' }, function(err) {
+            if (err) {
+                console.log(err);
+            }
+            console.log('File Saved!');
+        
+        });
+            console.log('state &&moveFrom is false',moveFrom, state)*/
     }
-    if(moveTo === 4 || moveTo === 8  || moveTo === 14){//if extra turn stones
-        utility += 0.50;
-
-    }
-    if(board[moveTo][enemy] ===1 ){//if enemhy stone on moveto square
-        utility += 0.50;
-    }
-
-    if(moveTo ===15 ){//if finish square //TODO: only add extra points if stone is in danger
-        utility += 0.20;
-    }
-
-
-    /*
-
-
-   /* let currentDanger = 0;
-    if(currentTile != null)
-    {
-        currentDanger = tileDanger[currentTile];
-    }
-
-    utility -= currentDanger ;
-*/
-    // TODO:  Add goodness for tiles that are behind enemies, and therefore likely to contribute to future boppage
-    // TODO:  Add goodness for moving a stone forward when we might be blocking friendlies
-
-    return utility;
-
-}
-else{
-    console.log ('\nERRORRR!!\nmoveFrom, state\n',moveFrom,'\n', state);
-    return null;
-/*
-    import fs = require('fs');
-
-fs.writeFile('./src/Ai/log.json', JSON.stringify({moveFrom: moveFrom, state: state}), { flag: 'w' }, function(err) {
-    if (err) {
-        console.log(err);
-    }
-    console.log('File Saved!');
-
-});
-    console.log('state &&moveFrom is false',moveFrom, state)*/
-}
 }
 
 
@@ -114,17 +115,17 @@ class Node {
         this.depth = parent ? parent.depth + 1 : 0;//parentDepth + 1
         this.maxDepth = maxDepth;
         this.probability = probability || 1;
-        this.nodeType = this.nodeType ? this.nodeType :this.getNodeType();
+        this.nodeType = this.nodeType ? this.nodeType : this.getNodeType();
         this.children = this.calculateChildren();
-        if(this.children.length === 0 ) this.nodeType = IS_Terminal_NODE//make this prettier
-      
+        if (this.children.length === 0) this.nodeType = IS_Terminal_NODE//make this prettier
+
         this.move = move;
         this.value = this.getValue();
         //console.log('got value',this.value)
 
         //console.log('this.nodeType', this.nodeType)
         if (this.utility) {
-          //console.log('util', this.value)
+            //console.log('util', this.value)
             //this.utility = 
         }
         // console.log('util', this.utility)
@@ -137,16 +138,19 @@ class Node {
     }
 
     getNodeType() {
-        if(this.nodeType){
-           // console.log('in this.nodeType',this.nodeType)
+        if (this.nodeType) {
+            // console.log('in this.nodeType',this.nodeType)
             return this.nodeType;
         }
         else if (!this.parent) {
             return IS_MAX_NODE;
         }
-       else if (this.parent.nodeType === IS_MAX_NODE) {
+        else if (this.gameState.currentPlayer === 'w') {//.nodeType === IS_MAX_NODE //white
             return IS_CHANCE_NODE
         }
+        /* else if (this.gameState.currentPlayer === 'w') {
+             return IS_MIN_NODE
+         }*/
         else {
             return IS_MAX_NODE
         }
@@ -159,24 +163,24 @@ class Node {
         switch (this.nodeType) {
             case IS_Terminal_NODE:
 
-            ///terminal or maxdepth reached
-           const ut = utility(this.parent.gameState, this.move);//move: move from parent,
-            //  console.log('in else this.maxDepth >= this.depth ,this. ',  this.gameState.possibleMoves)
-         // console.log('ut',ut)
-         if(!ut){
-        //     console.log('ut i null, this.node',this.nodeType,'posiblemove',this.gameState.possibleMoves)
-         }   
-         return ut;
+                ///terminal or maxdepth reached
+                const ut = utility(this.parent.gameState, this.move);//move: move from parent,
+                //  console.log('in else this.maxDepth >= this.depth ,this. ',  this.gameState.possibleMoves)
+                // console.log('ut',ut)
+                if (!ut) {
+                    //     console.log('ut i null, this.node',this.nodeType,'posiblemove',this.gameState.possibleMoves)
+                }
+                return ut;
             //this.utility = ut;
             //  console.log('ut',ut)
-           // console.log('this.utility',this.utility)
-              //  return this.utility
+            // console.log('this.utility',this.utility)
+            //  return this.utility
 
             case IS_MAX_NODE:
                 return this.maxValue()
 
             case IS_CHANCE_NODE:
-                return  this.expValue();
+                return this.expValue();
 
             default:
                 return 0;
@@ -186,20 +190,14 @@ class Node {
     }
     maxValue(state) {
         //values = [value(s) for s in sucessors(s)]
-
-       const max = this.children.reduce((prev, current) => (prev.value > current.value) ? prev : current);
-  
-     this.children.map((c,index)=>{
-      //  console.log(index,'this.children[i]',c.value)
-
-
-     })
-    // console.log('found max in children',max.value);
-    // console.log('children: \n');
-       /* this.children.map(child => {
-          //  console.log('child', child.utility)
-            //v += child.probability *child.value;
-        })*/
+        //console.log('this',this)
+        const max = this.children.reduce((prev, current) => (prev.value > current.value) ? prev : current);
+        // console.log('found max in children',max.value);
+        // console.log('children: \n');
+        /* this.children.map(child => {
+           //  console.log('child', child.utility)
+             //v += child.probability *child.value;
+         })*/
         // return max(values)
         return max.value;
     }
@@ -208,10 +206,12 @@ class Node {
 
         let v = 0;
         this.children.map(child => {
-         //   console.log('child.value',child.value)
+            //   console.log('child.value',child.value)
             v += child.probability * child.value;
         })
-       // console.log('expValue',v)
+        // const ut = utility(this.parent.gameState, this.move);//move: move from parent,
+
+       //  console.log('expValue',v)
         return v;
         //values = [value(s) for s in sucessors(s)]
         //weghts 
@@ -226,13 +226,13 @@ class Node {
 
             let children = [];
 
-            if(this.nodeType ===IS_MAX_NODE){
-              //  console.log('calculateChildren this.type,', this.nodeType)
-            //only possiblemove
-            possibleMoves.map(move => {
-                // console.log('in movemap',move)
-                //applyMove
-                //  console.log('this.game.state',this.gameState)
+            if (this.nodeType === IS_MAX_NODE) {
+                //  console.log('calculateChildren this.type,', this.nodeType)
+                //only possiblemove
+                possibleMoves.map(move => {
+                    // console.log('in movemap',move)
+                    //applyMove
+                    //  console.log('this.game.state',this.gameState)
                     //  console.log('in for loop!')
                     //console.log('probability')
                     //    console.log('this.gameState',this)
@@ -243,7 +243,7 @@ class Node {
                         parent: this,
                         //parentDepth: this.depth, 
                         maxDepth: this.maxDepth,
-                       // probability: probability,
+                        // probability: probability,
                         //utility: utility(this.gameState,move) ||0,
                         move: move
                     }
@@ -252,10 +252,10 @@ class Node {
 
                     if (childState) children.push(new Node(newNode))
 
-            })
-            
+                })
+
             }
-            else if(this.nodeType ===IS_CHANCE_NODE){
+            else if (this.nodeType === IS_CHANCE_NODE) {
                 possibleMoves.map(move => {
                     // console.log('in movemap',move)
                     //applyMove
@@ -278,10 +278,10 @@ class Node {
                             move: move
                         }
 
-    
+
                         if (childState) children.push(new Node(newNode))
                     }
-    
+
                 })
             }
 

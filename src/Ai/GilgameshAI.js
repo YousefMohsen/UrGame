@@ -5,6 +5,8 @@
 //export default
 //const Tree = require('./Tools/Tree');
 const buildTree = require('./Tools/Tree');
+var fs = require('fs');
+
 //import buildTree from './Tools/Tree';
 class GilgameshAI {
     constructor() {
@@ -12,19 +14,21 @@ class GilgameshAI {
     }
 
     calculateMove(state) {
-        const searchDepth = 2;
+        const searchDepth = 0;
         const tree = buildTree(state, searchDepth)
         //console.log('tree',tree)
         //console.log('tree',tree.root.children);
-       /* fs.writeFile('./src/Ai/initState.json', JSON.stringify(state), { flag: 'w' }, function (err) {
+       /* fs.writeFile('./src/Ai/generatedTree.json', JSON.stringify(tree), { flag: 'w' }, function (err) {
             if (err) {
                 console.log(err);
             }
             console.log('File Saved!');
         
         });*/
+//console.log('tree.root.type',tree.root.nodeType)
+       // tree.root.children.map((c,i)=>console.log('m',c.move,'value: ',c.value))
         //console.log('aiplayer',state.currentPlayer)
-        const max = tree.root.children.reduce((prev, current) => (prev.value < current.value) ? prev : current);
+        const max = tree.root.children.reduce((prev, current) => (prev.value > current.value) ? prev : current);
         return max.move;
         /*
         console.log('in gilgamesh calcMove', state);
