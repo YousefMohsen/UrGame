@@ -27,6 +27,57 @@ board:
    { w: 0, b: 0 },//14
    { w: 1, b: 0 } ] } //# 15 scoring stone
 
+   const testState = { currentPlayer: 'w',
+   dice: [ 1, 0, 1, 1 ],
+   diceResult: 1,
+   possibleMoves: { '0': 1, '2': 3, '8': 9 },
+   board: 
+    [ { w: 5, b: 4 },
+      { w: 0, b: 0 },
+      { w: 1, b: 0 },
+      { w: 0, b: 0 },
+      { w: 0, b: 0 },
+      { w: 0, b: 1 },
+      { w: 0, b: 0 },
+      { w: 0, b: 1 },
+      { w: 1, b: 0 },
+      { w: 0, b: 1 },
+      { w: 0, b: 0 },
+      { w: 0, b: 0 },
+      { w: 0, b: 0 },
+      { w: 0, b: 0 },
+      { w: 0, b: 0 },
+      { w: 0, b: 0 } ] };
+    // boardUtility(testState)
+
+    function boardUtility(state, aiColor = "b") {
+        //console.log('ai color')
+        let utility = 0.0;
+        const board = state.board;
+        const enemyColor = aiColor === "b" ? "w" : "b"
+        board.map((square, index) => {
+            if (square[aiColor] > 0 && index > 0) {
+    
+                utility += square[aiColor] * (index );
+            }
+            if (square[enemyColor] > 0 && index > 0) {
+                utility -=  square[enemyColor]  ?  (index ) :0;
+            }
+        });
+        if (board[8][aiColor]) {
+            utility += 0.8;
+        }
+        if (board[8][enemyColor]) {
+            utility -= 0.3;
+        }
+        if (board[4][aiColor]) {
+            utility += 0.5;
+        }
+    
+        console.log('boardUtility', utility)
+        //console.log('state', state)
+        return utility;
+    }
 //boardUtility(parentState,initState);
 
 // Ur(stones?: number, dice?: number, player?: string)
@@ -54,7 +105,7 @@ let state = game.getState();
 //console.log('possibleState',possibleState)
 
 function oneMove(){
-    const ai = new GilgameshAI();
+    const ai = new GilgameshAI(3);
     const game = new Ur(7, 4, Ur.BLACK);
     // default: stones = 7, dice = 4, player = Ur.WHITE
     let state = game.getState();
@@ -75,13 +126,13 @@ const move = ai.calculateMove(state);
 console.log('move',move);
 
 }
-for (let index = 0; index < 10; index++) {
+for (let index = 1; index < 10; index++) {
   //  const element = array[index];
- // testAgainstRandomPlayer(100,index)
+ //testAgainstRandomPlayer(10,index)
  
 }
 
-testAgainstRandomPlayer(10,3)
+testAgainstRandomPlayer(100,3)
 
 //oneMove()
 //console.log('state',state)
