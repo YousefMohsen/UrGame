@@ -67,7 +67,7 @@ class Game extends Component {
             this.ai = new RandomAI();//implement nabu
             break;
             case 'gilgamesh':
-            this.ai = new GilgameshAI();
+            this.ai = new GilgameshAI(2);
             break;
             case 'random':
             this.ai = new RandomAI();
