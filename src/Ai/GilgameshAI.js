@@ -8,7 +8,7 @@ import GameSimulator from './tools/GameSumulator';
 
 var fs = require("fs");
 function writeToJSON(data) {
-    fs.
+    
   fs.writeFile(
     "./src/Ai/generatedTree.json",
     JSON.stringify(data),
@@ -30,6 +30,8 @@ export default class GilgameshAI {
   }
 
   calculateMove(state) {
+      //return best possible move. IF no possible moves, null is returned.
+
     const searchDepth = this.depth; //2;
     const tree = buildTree(state, searchDepth);
     //console.log('tree',tree)
@@ -41,13 +43,13 @@ export default class GilgameshAI {
     const max = tree.root.children&&tree.root.children.length>0 ? tree.root.children.reduce((prev, current) =>
       prev.value > current.value ? prev : current
     ) : null;
-  writeToJSON(tree)
+  //writeToJSON(tree)
 
-    if(!max){
-      writeToJSON(tree)
-}
-    console.log('calc move',max.move)
-    return max.move;
+
+    if(!max)alert('max is null',max)
+    
+    
+    return max ? max.move : null;
     /*
         console.log('in gilgamesh calcMove', state);
         const possibleMoves = Object.keys(state.possibleMoves) || [];

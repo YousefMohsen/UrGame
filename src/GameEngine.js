@@ -149,13 +149,14 @@ class GameEngine {
 
     _setState(state) {
         if (state) {
-            this._state = state;
+            console.log(state)
+            this._state = fromJS(state);
             return this.getState();
         }
         return false;
     }
 
-    static startGame(numStones, numDice, player) {
+     startGame(numStones, numDice, player) {
         return startGame(numStones, numDice, player).toJS();
     }
 

@@ -87,7 +87,6 @@ class App extends Component {
 renderFooter(){
   return( 
   <div class="container">
-<div id="heart"></div>
 </div>)
 }
   render() {
