@@ -17,16 +17,18 @@ function writeToJSON(data){
 }
 //import buildTree from './Tools/Tree';
 class GilgameshAI {
-    constructor() {
+    constructor(depth,playerColor) {
+        this.depth = depth;
+        this.playerColor = playerColor;
      //   this.color = 'b'; //assumme AI always plays with black stones. TODO: More dynamically.
     }
 
     calculateMove(state) {
-        const searchDepth = 2;
-        const tree = buildTree(state, searchDepth)
+        const searchDepth = this.depth;//2;
+        const tree = buildTree(state, searchDepth,this.playerColor)
         //console.log('tree',tree)
         //console.log('tree',tree.root.children);
-       // writeToJSON(tree)
+      //  writeToJSON(tree)
 //console.log('tree.root.type',tree.root.nodeType)
        // tree.root.children.map((c,i)=>console.log('m',c.move,'value: ',c.value))
         //console.log('aiplayer',state.currentPlayer)
