@@ -31,7 +31,7 @@ function getProbability(diceRoll) {
     }
 }
 
-function boardUtility(state, aiColor = "b") {
+function boardUtility(state, aiColor ) {
     //console.log('ai color')
     let utility = 0.0;
     const board = state.board;
@@ -190,7 +190,8 @@ function utility(state, moveFrom) {
 }
 
 class Node {
-    constructor({ gameState, parent, maxDepth, probability, move }) {
+    constructor({ gameState, parent, maxDepth, probability, move ,playerColor}) {
+        this.playerColor =playerColor;
         this.gameState = gameState;
         this.parent = { ...parent }; //todo: remove spread
         this.depth = parent ? parent.depth + 1 : 0; //parentDepth + 1
@@ -218,27 +219,25 @@ class Node {
     }
 
     getNodeType() {
+
+        const enemy = this.playerColor === "b" ? "w" : "b";
         if (this.nodeType) {
-            // console.log('in this.nodeType',this.nodeType)
-            return this.nodeType;
+          // console.log('in this.nodeType',this.nodeType)
+          return this.nodeType;
         } else if (!this.parent) {
-            return IS_MAX_NODE;
-        }
-        else if (
-            this.gameState.currentPlayer === "w" &&
-            this.parent.gameState.currentPlayer === "w" &&
-            this.parent.nodeType === IS_CHANCE_NODE
+          return IS_MAX_NODE;
+        } else if (
+          this.gameState.currentPlayer === enemy &&
+          this.parent.gameState&&   this.parent.gameState.currentPlayer === enemy &&
+          this.parent.nodeType === IS_CHANCE_NODE
         ) {
-            return IS_MIN_NODE;
-        } else if (this.gameState.currentPlayer === "w") {
-            //.nodeType === IS_MAX_NODE //white
-            return IS_CHANCE_NODE;
+          return IS_MIN_NODE;
+        } else if (this.gameState.currentPlayer === enemy) {
+          return IS_CHANCE_NODE;
         } else {
-            //if im === w && parent ==w then
-            /** */
-            return IS_MAX_NODE;
+          return IS_MAX_NODE;
         }
-    }
+      }
     getValue() {
         //let v;
 
@@ -344,6 +343,7 @@ class Node {
                     let newNode = {
                         gameState: childState,
                         parent: this,
+                        playerColor: this.playerColor,
                         //parentDepth: this.depth,
                         maxDepth: this.maxDepth,
                         // probability: probability,
@@ -376,6 +376,7 @@ class Node {
                             gameState: childState,
                             parent: this,
                             //parentDepth: this.depth,
+                            playerColor:this.playerColor,
                             maxDepth: this.maxDepth,
                             probability: probability,
                             //utility: utility(this.gameState,move) ||0,
@@ -403,21 +404,22 @@ class Node {
 }
 
 class Tree {
-    constructor(rootState, maxDepth) {
+    constructor(rootState, maxDepth,playerColor) {
         let node = {
             gameState: rootState,
             parent: null,
             // parentDepth: 0,
             maxDepth: maxDepth,
-            probability: 1
+            probability: 1,
+            playerColor:playerColor
         };
         const rootNode = new Node(node);
         this.root = rootNode;
     }
 }
 
-function buildTree(gameState, maxDepth) {
-    return new Tree(gameState, maxDepth);
+function buildTree(gameState, maxDepth, playerColor) {
+    return new Tree(gameState, maxDepth,playerColor);
 }
 
 module.exports = buildTree;
