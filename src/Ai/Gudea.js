@@ -24,12 +24,14 @@ class GudeaAI {
   }
 
   calculateMove(state) {
+///if only one move return that move TODO
+
     //returns null if no possible moves
     const searchDepth = this.depth; //2;
     const tree = buildTree(state, searchDepth, this.color);
     //console.log('tree',tree)
     //console.log('tree',tree.root.children);
-    writeToJSON(tree)
+  //  writeToJSON(tree)
     //console.log('tree.root.type',tree.root.nodeType)
     // tree.root.children.map((c,i)=>console.log('m',c.move,'value: ',c.value))
     //console.log('aiplayer',state.currentPlayer)
@@ -202,7 +204,7 @@ function boardUtility(state, aiColor) {
         utility += playerStoneOneBehind * ut.v1 * getProbability(1) + playerStoneTwoBehind * ut.v1 * getProbability(2);
 
         //better if no enemy
-        utility -= (8 - (13 - index)) + 2
+        utility -= (8 - (13 - index))
         //betetr if enemy has feve stones    
 
       }
@@ -217,7 +219,7 @@ class Node {
     this.playerColor = playerColor;
     this.gameState = gameState;
     this.parent = { ...parent }; //todo: remove spread
-    this.depth = parent ? parent.depth + 1 : 1; //parentDepth + 1
+    this.depth = parent ? parent.depth + 1 : 0; //parentDepth + 1
     this.maxDepth = maxDepth;
     this.probability = probability || 1;
     this.nodeType = this.nodeType ? this.nodeType : this.getNodeType();
@@ -284,12 +286,12 @@ class Node {
       //  return this.utility
 
       case IS_MAX_NODE:
-        return this.maxValue(); // + (this.parent.gameState ? utility(this.parent.gameState, this.move) : 0);
+        return this.maxValue() + boardUtility(this.gameState, this.playerColor); // + (this.parent.gameState ? utility(this.parent.gameState, this.move) : 0);
       case IS_MIN_NODE:
-        return this.minValue();
+        return this.minValue() +boardUtility(this.gameState, this.playerColor);
 
       case IS_CHANCE_NODE:
-        return this.expValue();
+        return this.expValue() +boardUtility(this.gameState, this.playerColor);;
 
       default:
         return 0;
@@ -310,7 +312,7 @@ class Node {
                  //v += child.probability *child.value;
              })*/
     // return max(values)
-    return max.value;
+    return max.value ;
   }
   minValue(state) {
     const min = this.children.reduce((prev, current) =>

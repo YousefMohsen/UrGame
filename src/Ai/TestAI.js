@@ -121,10 +121,10 @@ for (let index = 2; index < 10; index++) {
 }
 
 
-//gudeaVsGilgamesh(100, 1 )
+gudeaVsGilgamesh(100, 1 )
 
 //randomVsAI(100,3);
-oneMove()
+//oneMove()
 //console.log('state',state)
 //const tree = buildTree(state,2)
 //console.log('tree',tree)
