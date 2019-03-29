@@ -9,7 +9,7 @@ function writeToJSON(data) {
     "./src/Ai/generatedTree.json",
     JSON.stringify(data),
     { flag: "w" },
-    function(err) {
+    function (err) {
       if (err) {
         console.log(err);
       }
@@ -29,15 +29,15 @@ class GudeaAI {
     const tree = buildTree(state, searchDepth, this.color);
     //console.log('tree',tree)
     //console.log('tree',tree.root.children);
-    //  writeToJSON(tree)
+    writeToJSON(tree)
     //console.log('tree.root.type',tree.root.nodeType)
     // tree.root.children.map((c,i)=>console.log('m',c.move,'value: ',c.value))
     //console.log('aiplayer',state.currentPlayer)
     const max =
       tree.root.children && tree.root.children.length > 0
         ? tree.root.children.reduce((prev, current) =>
-            prev.value > current.value ? prev : current
-          )
+          prev.value > current.value ? prev : current
+        )
         : null;
     return max ? max.move : null;
     /*
@@ -148,22 +148,22 @@ function boardUtility(state, aiColor) {
     const enemyStones = board[index][enemyColor];
     //divide to war zones /safe zones
 
-    if(index===0){//not on board
-        if(enemyStones){//good if enemy has stones off board
-            utility+=enemyStones*ut.v1;
-        }
-        if(playerStones){//bad of player have stones off board
-            utility-=playerStones*ut.v1;
-        }
+    if (index === 0) {//not on board
+      if (enemyStones) {//good if enemy has stones off board
+        utility += enemyStones * ut.v1;
+      }
+      if (playerStones) {//bad of player have stones off board
+        utility -= playerStones * ut.v1;
+      }
     }
-    if(index>12 ){//safe zone
-        if(playerStones){//good if player stones can make it to end safe zone
-            utility+=playerStones*ut.v1;
-        } 
-        if(enemyStones){//good if player stones can make it to end safe zone
-            utility-=playerStones*ut.v1;
-        }   
-    }  
+    if (index > 12) {//safe zone
+      if (playerStones) {//good if player stones can make it to end safe zone
+        utility += playerStones * ut.v1;
+      }
+      if (enemyStones) {//good if player stones can make it to end safe zone
+        utility -= playerStones * ut.v1;
+      }
+    }
 
     if (playerStones > 0) {//extra turns
       // console.log('playerStones',playerStones)
@@ -191,7 +191,7 @@ function boardUtility(state, aiColor) {
         const enemyTwoBehind = board[index - 2][enemyColor]; //number of enemy stones on the #2 square behinde
         utility -= enemyOneBehind * ut.v1 + enemyTwoBehind * ut.v1;
 
-        utility +=ut.v1
+        utility += ut.v1
 
       }
       if (enemyStones) {
@@ -199,13 +199,13 @@ function boardUtility(state, aiColor) {
         const playerStoneOneBehind = board[index - 1][aiColor]; //number of own stones on the square behinde
         const playerStoneTwoBehind = board[index - 2][aiColor]; //number of own stones on the #2 square behinde
         //utility += playerStoneOneBehind * ut.v1*getProbability(1) + playerStoneTwoBehind * ut.v1*getProbability(2);
-        utility += playerStoneOneBehind * ut.v1*getProbability(1) + playerStoneTwoBehind * ut.v1*getProbability(2);
+        utility += playerStoneOneBehind * ut.v1 * getProbability(1) + playerStoneTwoBehind * ut.v1 * getProbability(2);
 
         //better if no enemy
-        utility -= (8-(13-index))
-     //betetr if enemy has feve stones    
+        utility -= (8 - (13 - index)) + 2
+        //betetr if enemy has feve stones    
 
-    }
+      }
     }
   }
   //console.log(utility)
@@ -217,7 +217,7 @@ class Node {
     this.playerColor = playerColor;
     this.gameState = gameState;
     this.parent = { ...parent }; //todo: remove spread
-    this.depth = parent ? parent.depth + 1 : 0; //parentDepth + 1
+    this.depth = parent ? parent.depth + 1 : 1; //parentDepth + 1
     this.maxDepth = maxDepth;
     this.probability = probability || 1;
     this.nodeType = this.nodeType ? this.nodeType : this.getNodeType();

@@ -2,6 +2,8 @@ const Ur = require("../GameEngine");
 const GameSimulator = require("./Tools/GameSimulator");
 const GilgameshAI = require("./GilgameshAI");
 const GudeaAI = require("./Gudea");
+const ActionEvalAi = require("./ActionEvalAi");
+
 const buildTree = require("./Tools/Tree");
 const AI = new GilgameshAI();
 //const gudea =  new GudeaAI();
@@ -60,33 +62,6 @@ const testState = {
 };
 // boardUtility(testState)
 
-function boardUtility(state, aiColor = "b") {
-  //console.log('ai color')
-  let utility = 0.0;
-  const board = state.board;
-  const enemyColor = aiColor === "b" ? "w" : "b";
-  board.map((square, index) => {
-    if (square[aiColor] > 0 && index > 0) {
-      utility += square[aiColor] * index;
-    }
-    if (square[enemyColor] > 0 && index > 0) {
-      utility -= square[enemyColor] ? index : 0;
-    }
-  });
-  if (board[8][aiColor]) {
-    utility += 0.8;
-  }
-  if (board[8][enemyColor]) {
-    utility -= 0.3;
-  }
-  if (board[4][aiColor]) {
-    utility += 0.5;
-  }
-
-  console.log("boardUtility", utility);
-  //console.log('state', state)
-  return utility;
-}
 //boardUtility(parentState,initState);
 
 // Ur(stones?: number, dice?: number, player?: string)
@@ -115,15 +90,15 @@ let state = game.getState();
 
 function oneMove() {
   const ai = new GilgameshAI(3);
-  const gudeaAI = new GudeaAI(2);
+  const gudeaAi = new GudeaAI(3, BLACK); //new GilgameshAI(depth);
   const game = new Ur(7, 4, Ur.BLACK);
   // default: stones = 7, dice = 4, player = Ur.WHITE
   let state = game.getState();
 
-  for (let index = 0; index < 20; index++) {}
+  for (let index = 0; index < 20; index++) { }
   //console.log('initState:before',initState)
   let counter = 0;
-  while (!(counter > 20 && state.currentPlayer === "b")) {
+  while (!(counter > 5 && state.currentPlayer === "b")) {
     const rand = Math.floor(
       Math.random() * Object.keys(state.possibleMoves).length
     );
@@ -135,19 +110,21 @@ function oneMove() {
     counter++;
   }
   console.log("state.currentPlayer", state.currentPlayer);
-  const move = gudeaAI.calculateMove(state);
+  const move = gudeaAi.calculateMove(state);
   console.log("move", move);
 }
-for (let index = 1; index < 10; index++) {
+for (let index = 2; index < 10; index++) {
   //  const element = array[index];
-  gudeaVsGilgamesh(10,index)
+  //gudeaVsGilgamesh(10,index)
   //randomVsAI(10,index);
 
 }
 
-//gudeaVsGilgamesh(100, 2);
-//randomVsAI(100,2);
-//oneMove()
+
+//gudeaVsGilgamesh(100, 1 )
+
+//randomVsAI(100,3);
+oneMove()
 //console.log('state',state)
 //const tree = buildTree(state,2)
 //console.log('tree',tree)
@@ -191,74 +168,74 @@ function printChildren(node) {
 
 
 function randomVsAI(games, depth) {
-    let blackWins = 0;
-    let whiteWins = 0;
-  
-    const gudeaAi = new GudeaAI(depth, BLACK); //new GilgameshAI(depth);
-   // const gilgameshAi = new GilgameshAI(depth, BLACK); //black is default
-  
-    for (let index = 0; index < games; index++) {
-      const game = new Ur(7, 4, Ur.WHITE);
-      let state = game.getState();
-  
-      let lopX = 0;
-      while (!state.winner) {
-        //    lopX++;
-        // console.log('\nstate:before', state);
-  
-        if (!state.possibleMoves) {
-          console.log(
-            "\nDidnt find any possibleMoves!",
-            state.possibleMoves,
-            "\n"
-          );
-        }
-        if (state.diceResult > 0 && Object.keys(state.possibleMoves).length > 0) {
-           const rand = Math.floor(Math.random() * Object.keys(state.possibleMoves).length);
+  let blackWins = 0;
+  let whiteWins = 0;
 
+  const gudeaAi = new GudeaAI(depth, BLACK); //new GilgameshAI(depth);
+  // const gilgameshAi = new GilgameshAI(depth, BLACK); //black is default
 
-          const move =  state.currentPlayer === BLACK ? gudeaAi.calculateMove(state) : Object.keys(state.possibleMoves)[rand];
-          state = game.takeTurn(state.currentPlayer, move);
+  for (let index = 0; index < games; index++) {
+    const game = new Ur(7, 4, Ur.WHITE);
+    let state = game.getState();
 
-        } else {
-          state = game.voidTurn(state.currentPlayer);
-        }
-  
-        // or game.takeTurn('w', 0);
+    let lopX = 0;
+    while (!state.winner) {
+      //    lopX++;
+      // console.log('\nstate:before', state);
+
+      if (!state.possibleMoves) {
+        console.log(
+          "\nDidnt find any possibleMoves!",
+          state.possibleMoves,
+          "\n"
+        );
       }
-  
-      if (state.winner === "w") {
-        whiteWins++;
-      } else if (state.winner === "b") {
-        blackWins++;
+      if (state.diceResult > 0 && Object.keys(state.possibleMoves).length > 0) {
+        const rand = Math.floor(Math.random() * Object.keys(state.possibleMoves).length);
+
+
+        const move = state.currentPlayer === BLACK ? gudeaAi.calculateMove(state) : Object.keys(state.possibleMoves)[rand];
+        state = game.takeTurn(state.currentPlayer, move);
+
+      } else {
+        state = game.voidTurn(state.currentPlayer);
       }
-      console.log(
-        index + 1,
-        "games played.  Gudea won::",
-        blackWins,
-        " Random won:",
-        whiteWins
-      );
+
+      // or game.takeTurn('w', 0);
     }
-  
+
+    if (state.winner === "w") {
+      whiteWins++;
+    } else if (state.winner === "b") {
+      blackWins++;
+    }
     console.log(
-      "Depth: ",
-      depth,
-      ", ",
-      " played games:",
-      games,
-      "  Gudea won::",
+      index + 1,
+      "games played.  Gudea won::",
       blackWins,
       " Random won:",
       whiteWins
     );
   }
+
+  console.log(
+    "Depth: ",
+    depth,
+    ", ",
+    " played games:",
+    games,
+    "  Gudea won::",
+    blackWins,
+    " Random won:",
+    whiteWins
+  );
+}
 function gudeaVsGilgamesh(games, depth) {
   let blackWins = 0;
   let whiteWins = 0;
 
   const gudeaAi = new GudeaAI(depth, WHITE); //new GilgameshAI(depth);
-  const gilgameshAi = new GilgameshAI(depth, BLACK); //black is default
+  const gilgameshAi = new ActionEvalAi(1, BLACK); //black is default
 
   for (let index = 0; index < games; index++) {
     const game = new Ur(7, 4, Ur.WHITE);
@@ -297,7 +274,7 @@ function gudeaVsGilgamesh(games, depth) {
     }
     console.log(
       index + 1,
-      "games played.  Gilgamesh won::",
+      "games played.  other AI won::",
       blackWins,
       " Gudea won:",
       whiteWins
