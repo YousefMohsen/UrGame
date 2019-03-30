@@ -10,7 +10,7 @@ class App extends Component {
     this.state = {
       enterAIMenu: true,
       enterGame: true,
-      aiType:'gilgamesh'
+      aiType: 'gilgamesh'
     }
 
 
@@ -33,8 +33,16 @@ class App extends Component {
           <Button
             color="white"
             primary={true}
-            label='Gilgamesh (minimax AI)'
+            label='Gilgamesh (Expectimax AI1)'
             onClick={() => { this.setState({ enterGame: true, aiType: 'gilgamesh' }) }}
+            style={{ margin: '20px 0px', display: 'block', width: '100%' }}
+          />
+
+          <Button
+            color="white"
+            primary={true}
+            label='Gudea (Expectimax AI2)'
+            onClick={() => { this.setState({ enterGame: true, aiType: 'gudea' }) }}
             style={{ margin: '20px 0px', display: 'block', width: '100%' }}
           />
 
@@ -60,7 +68,7 @@ class App extends Component {
             color="white"
             primary={true}
             label="Back"
-            onClick={()=>{this.setState({ enterAIMenu: false })}}
+            onClick={() => { this.setState({ enterAIMenu: false }) }}
             style={{ position: 'absolute', left: '14px', top: '14px' }}
           />
 
@@ -84,11 +92,11 @@ class App extends Component {
   }
 
 
-renderFooter(){
-  return( 
-  <div class="container">
-</div>)
-}
+  renderFooter() {
+    return (
+      <div class="container">
+      </div>)
+  }
   render() {
     const content = this.renderContent()
     const footer = this.renderFooter();

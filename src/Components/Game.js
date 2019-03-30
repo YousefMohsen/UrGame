@@ -4,7 +4,7 @@ import { Icons } from "grommet-icons";
 import SvgBoard from "./SVGBoard";
 import GilgameshAI from "../Ai/GilgameshAI";
 import RandomAI from "../Ai/RandomAI";
-
+import GudeaAI from "../Ai/GudeaAI"
 import "./Game.css";
 import GameEngine from "../GameEngine";
 
@@ -62,6 +62,8 @@ class Game extends Component {
       case "nabu":
         this.ai = new RandomAI(); //implement nabu
         break;
+      case "gudea": this.ai = new GudeaAI(3, BLACK);
+        break;
       case "gilgamesh":
         this.ai = new GilgameshAI(2);
         break;
@@ -100,8 +102,8 @@ class Game extends Component {
             style={{ marginRight: "2px", width: "50px", height: "50px" }}
             className={
               this.state.humanData.stoneColor === color &&
-              this.state.selectedStone === 0 &&
-              i === 0
+                this.state.selectedStone === 0 &&
+                i === 0
                 ? " stone-glow"
                 : ""
             }
@@ -410,6 +412,11 @@ class Game extends Component {
 
             stonesOnBoard.push(
               <img
+              className={
+                  this.state.selectedStone === index
+                  ? " stone-glow"
+                  : ""
+              }
                 onClick={() => this.onSquareClick("" + index)}
                 src={"w-stone.png"}
                 style={{
