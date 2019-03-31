@@ -24,24 +24,25 @@ class GudeaAI {
   }
 
   calculateMove(state) {
-///if only one move return that move TODO
+    ///if only one move return that move TODO
 
     //returns null if no possible moves
     const searchDepth = this.depth; //2;
     const tree = buildTree(state, searchDepth, this.color);
-    //console.log('tree',tree)
-    //console.log('tree',tree.root.children);
-  //  writeToJSON(tree)
-    //console.log('tree.root.type',tree.root.nodeType)
-    // tree.root.children.map((c,i)=>console.log('m',c.move,'value: ',c.value))
-    //console.log('aiplayer',state.currentPlayer)
+    if (Object.keys(state.possibleMoves).length === 1) {//if only one possible move, return that move.
+      return Object.keys(state.possibleMoves)[0]
+    }
+
+    if (Object.keys(state.possibleMoves).length === 0) {//if no possible move return move
+      return null;
+    }
     const max =
       tree.root.children && tree.root.children.length > 0
         ? tree.root.children.reduce((prev, current) =>
           prev.value > current.value ? prev : current
         )
-        : null;
-    return max ? max.move : null;
+        : {};
+    return max.move;
     /*
         console.log('in GudeaAI calcMove', state);
         const possibleMoves = Object.keys(state.possibleMoves) || [];
@@ -193,7 +194,7 @@ function boardUtility(state, aiColor) {
         const enemyTwoBehind = board[index - 2][enemyColor]; //number of enemy stones on the #2 square behinde
         utility -= enemyOneBehind * ut.v1 + enemyTwoBehind * ut.v1;
 
-        utility += ut.v1
+       // utility += index*ut.v1
 
       }
       if (enemyStones) {
@@ -288,10 +289,10 @@ class Node {
       case IS_MAX_NODE:
         return this.maxValue() + boardUtility(this.gameState, this.playerColor); // + (this.parent.gameState ? utility(this.parent.gameState, this.move) : 0);
       case IS_MIN_NODE:
-        return this.minValue() +boardUtility(this.gameState, this.playerColor);
+        return this.minValue() + boardUtility(this.gameState, this.playerColor);
 
       case IS_CHANCE_NODE:
-        return this.expValue() +boardUtility(this.gameState, this.playerColor);;
+        return this.expValue() + boardUtility(this.gameState, this.playerColor);;
 
       default:
         return 0;
@@ -312,7 +313,7 @@ class Node {
                  //v += child.probability *child.value;
              })*/
     // return max(values)
-    return max.value ;
+    return max.value;
   }
   minValue(state) {
     const min = this.children.reduce((prev, current) =>
