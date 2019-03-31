@@ -168,17 +168,17 @@ function boardUtility(state, aiColor) {
       }
     }
 
-    if (playerStones > 0) {//extra turns
+    if (playerStones > 0) {
       // console.log('playerStones',playerStones)
       if (index === 4 || index === 3) {
         //squares 3 and 4 are tactical good if enemy has many square at index<5
-        utility += ut.v2;
+     //   utility += ut.v2;
       }
-      if (index === 8) {
+      if (index === 8) {//extra turn
         //keep square 8
-        utility += ut.v2;
+        utility += ut.v4;
       }
-      if (index === 4 || index === 8 || index === 14) {
+      if (index === 4 || index === 14) {//extra turns
         //extra turns
         utility += ut.v2;
       }
@@ -188,13 +188,14 @@ function boardUtility(state, aiColor) {
       //be offensive
       //keep square 8
       //kill is better than moving a secure stone
-      if (playerStones) {
+      if (playerStones > 0) {
         //avoid danger
         const enemyOneBehind = board[index - 1][enemyColor]; //number of enemy stones on the square behinde
         const enemyTwoBehind = board[index - 2][enemyColor]; //number of enemy stones on the #2 square behinde
         utility -= enemyOneBehind * ut.v1 + enemyTwoBehind * ut.v1;
 
-       // utility += index*ut.v1
+        // utility += index*ut.v1
+
 
       }
       if (enemyStones) {
@@ -207,11 +208,13 @@ function boardUtility(state, aiColor) {
         //better if no enemy
         utility -= (8 - (13 - index))
         //betetr if enemy has feve stones    
-
       }
     }
+    if ((index === 3 || index === 4) && (board[5][enemyColor] > 0) && playerStones > 0) {
+      //It is good if there is a playerstone at squares 3 or/and 4(safe zone) and there is enemy stones at squares 
+      utility += ut.v1
+    }
   }
-  //console.log(utility)
   return utility;
 }
 
@@ -224,7 +227,7 @@ class Node {
     this.maxDepth = maxDepth;
     this.probability = probability || 1;
     this.nodeType = this.nodeType ? this.nodeType : this.getNodeType();
-    this.children = this.calculateChildren();
+    this.children = this.expand();
     if (this.children.length === 0) this.nodeType = IS_Terminal_NODE; //make this prettier
 
     this.move = move;
@@ -268,23 +271,8 @@ class Node {
 
     switch (this.nodeType) {
       case IS_Terminal_NODE:
-        ///terminal or maxdepth reached
-        //const ut =  utility(this.parent.gameState, this.move)  //move: move from parent,
-
         const ut = boardUtility(this.gameState, this.playerColor);
-        // const ut = boardUtilityCompare(this.gameState,this.parent.gameState);
-
-        //
-        //  console.log('in else this.maxDepth >= this.depth ,this. ',  this.gameState.possibleMoves)
-        // console.log('ut',ut)
-        if (!ut) {
-          //     console.log('ut i null, this.node',this.nodeType,'posiblemove',this.gameState.possibleMoves)
-        }
         return ut;
-      //this.utility = ut;
-      //  console.log('ut',ut)
-      // console.log('this.utility',this.utility)
-      //  return this.utility
 
       case IS_MAX_NODE:
         return this.maxValue() + boardUtility(this.gameState, this.playerColor); // + (this.parent.gameState ? utility(this.parent.gameState, this.move) : 0);
@@ -293,27 +281,17 @@ class Node {
 
       case IS_CHANCE_NODE:
         return this.expValue() + boardUtility(this.gameState, this.playerColor);;
-
       default:
         return 0;
     }
     //values = [value(s) for s in sucessors(s)]
     //weghts
   }
-  maxValue(state) {
-    //values = [value(s) for s in sucessors(s)]
-    //console.log('this',this)
-    const max = this.children.reduce((prev, current) =>
+  maxValue() {
+    const maxNode = this.children.reduce((prev, current) =>
       prev.value > current.value ? prev : current
     );
-    // console.log('found max in children',max.value);
-    // console.log('children: \n');
-    /* this.children.map(child => {
-               //  console.log('child', child.utility)
-                 //v += child.probability *child.value;
-             })*/
-    // return max(values)
-    return max.value;
+    return maxNode.value;
   }
   minValue(state) {
     const min = this.children.reduce((prev, current) =>
@@ -326,18 +304,12 @@ class Node {
   expValue() {
     let v = 0;
     this.children.map(child => {
-      //   console.log('child.value',child.value)
       v += child.probability * child.value;
     });
-    // const ut = utility(this.parent.gameState, this.move);//move: move from parent,
-
-    //  console.log('expValue',v)
     return v;
-    //values = [value(s) for s in sucessors(s)]
-    //weghts
   }
 
-  calculateChildren() {
+  expand() {
     if (this.maxDepth > this.depth && this.gameState) {
       // find children if node is non terminal and maxDepth is not reached !this.gameState.winner
       const possibleMoves = this.gameState
@@ -348,35 +320,24 @@ class Node {
       let children = [];
 
       if (this.nodeType === IS_MAX_NODE || this.nodeType === IS_MIN_NODE) {
-        //
-        //  console.log('calculateChildren this.type,', this.nodeType)
-        //only possiblemove
         possibleMoves.map(move => {
-          // console.log('in movemap',move)
-          //applyMove
-          //  console.log('this.game.state',this.gameState)
-          //  console.log('in for loop!')
-          //console.log('probability')
-          //    console.log('this.gameState',this)
           let childState = gameSimulator.getPossibleState(
             this.gameState,
             this.gameState.currentPlayer,
             move,
             1
           );
-          // console.log('childState',childState)
-          let newNode = {
-            gameState: childState,
-            parent: this,
-            //parentDepth: this.depth,
-            maxDepth: this.maxDepth,
-            playerColor: this.playerColor,
-            // probability: probability,
-            //utility: utility(this.gameState,move) ||0,
-            move: move
-          };
+          if (childState) {
+            let newNode = {
+              gameState: childState,
+              parent: this,
+              maxDepth: this.maxDepth,
+              playerColor: this.playerColor,
+              move: move
+            };
 
-          if (childState) children.push(new Node(newNode));
+            children.push(new Node(newNode));
+          }
         });
       } else if (this.nodeType === IS_CHANCE_NODE) {
         possibleMoves.map(move => {

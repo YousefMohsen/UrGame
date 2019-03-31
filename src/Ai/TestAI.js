@@ -10,56 +10,10 @@ const AI = new GilgameshAI();
 var util = require("util");
 const BLACK = "b";
 const WHITE = "w";
+const nil = 0;
+const one = 1;
 
-const initState = {
-  currentPlayer: "b",
-  dice: [0, 1, 1, 0],
-  diceResult: 2,
-  possibleMoves: { "0": 1, "2": 3 },
-  board: [
-    { w: 4, b: 5 }, //0
-    { w: 0, b: 0 }, //1
-    { w: 0, b: 0 }, //2
-    { w: 1, b: 0 }, //3
-    { w: 1, b: 0 }, //#4 holy
-    { w: 0, b: 0 }, //5
-    { w: 0, b: 1 }, //6
-    { w: 1, b: 0 }, //7
-    { w: 0, b: 0 }, //8
-    { w: 0, b: 0 }, //9
-    { w: 0, b: 1 }, //10
-    { w: 0, b: 0 }, //11
-    { w: 0, b: 0 }, //12
-    { w: 0, b: 0 }, //13
-    { w: 0, b: 0 }, //14
-    { w: 1, b: 0 }
-  ]
-}; //# 15 scoring stone
 
-const testState = {
-  currentPlayer: "w",
-  dice: [1, 0, 1, 1],
-  diceResult: 1,
-  possibleMoves: { "0": 1, "2": 3, "8": 9 },
-  board: [
-    { w: 5, b: 4 },
-    { w: 0, b: 0 },
-    { w: 1, b: 0 },
-    { w: 0, b: 0 },
-    { w: 0, b: 0 },
-    { w: 0, b: 1 },
-    { w: 0, b: 0 },
-    { w: 0, b: 1 },
-    { w: 1, b: 0 },
-    { w: 0, b: 1 },
-    { w: 0, b: 0 },
-    { w: 0, b: 0 },
-    { w: 0, b: 0 },
-    { w: 0, b: 0 },
-    { w: 0, b: 0 },
-    { w: 0, b: 0 }
-  ]
-};
 // boardUtility(testState)
 
 //boardUtility(parentState,initState);
@@ -67,8 +21,7 @@ const testState = {
 // Ur(stones?: number, dice?: number, player?: string)
 const game = new Ur(7, 4, Ur.BLACK);
 // default: stones = 7, dice = 4, player = Ur.WHITE
-const gameSimulator = new GameSimulator();
-let state = game.getState();
+
 //console.log(JSON.stringify(state))
 //state =game.takeTurn(state.currentPlayer,0)
 //state =game.takeTurn(state.currentPlayer,0)
@@ -113,15 +66,15 @@ function oneMove() {
   const move = gudeaAi.calculateMove(state);
   console.log("move", move);
 }
-for (let index = 2; index < 10; index++) {
+for (let index = 1; index < 10; index++) {
   //  const element = array[index];
-  //gudeaVsGilgamesh(10,index)
-  //randomVsAI(10,index);
+  gudeaVsGilgamesh(30, index)
+  //randomVsAI(10,5);
 
 }
 
 
-gudeaVsGilgamesh(100, 1 )
+//gudeaVsGilgamesh(30 )
 
 //randomVsAI(100,3);
 //oneMove()
@@ -142,12 +95,6 @@ gudeaVsGilgamesh(100, 1 )
 
 //printChildren(tree.root)
 
-function printChildren(node) {
-  node.children.map((child, i) => {
-    console.log("\n\nchild", i, "of ", node.depth, child.gameState, "\n\n");
-    printChildren(child);
-  });
-}
 // returns false on invalid input, new state otherwise
 // move is allowed to be undefined should there be no possible move
 
@@ -168,10 +115,11 @@ function printChildren(node) {
 
 
 function randomVsAI(games, depth) {
+
   let blackWins = 0;
   let whiteWins = 0;
 
-  const gudeaAi = new GudeaAI(depth, BLACK); //new GilgameshAI(depth);
+  const gudeaAi = new GilgameshAI(depth, BLACK); //new GilgameshAI(depth);
   // const gilgameshAi = new GilgameshAI(depth, BLACK); //black is default
 
   for (let index = 0; index < games; index++) {
@@ -211,7 +159,7 @@ function randomVsAI(games, depth) {
     }
     console.log(
       index + 1,
-      "games played.  Gudea won::",
+      "games played.  AI won::",
       blackWins,
       " Random won:",
       whiteWins
@@ -224,7 +172,7 @@ function randomVsAI(games, depth) {
     ", ",
     " played games:",
     games,
-    "  Gudea won::",
+    "  AI won::",
     blackWins,
     " Random won:",
     whiteWins
@@ -233,9 +181,8 @@ function randomVsAI(games, depth) {
 function gudeaVsGilgamesh(games, depth) {
   let blackWins = 0;
   let whiteWins = 0;
-
-  const gudeaAi = new GudeaAI(depth, WHITE); //new GilgameshAI(depth);
-  const gilgameshAi = new ActionEvalAi(1, BLACK); //black is default
+  const gilgameshAi = new GudeaAI(depth, BLACK); //black is default
+  const gudeaAi = new GudeaAI(depth + 1, WHITE); //new GilgameshAI(depth);
 
   for (let index = 0; index < games; index++) {
     const game = new Ur(7, 4, Ur.WHITE);
@@ -272,11 +219,13 @@ function gudeaVsGilgamesh(games, depth) {
     } else if (state.winner === "b") {
       blackWins++;
     }
+
     console.log(
       index + 1,
-      "games played.  other AI won::",
+      "games played.   ",
+      "Gudea( depth " + depth + ")  won:",
       blackWins,
-      " Gudea won:",
+      " Gudea( depth " + (depth + 1) + ") won:",
       whiteWins
     );
   }
@@ -287,9 +236,9 @@ function gudeaVsGilgamesh(games, depth) {
     ", ",
     " played games:",
     games,
-    "  Gilgamesh won::",
+    "  Gudea( depth " + depth + ")  won:",
     blackWins,
-    " Gudea won:",
+    " Gudea( depth " + depth + 1 + ") won:",
     whiteWins
   );
 }

@@ -25,6 +25,16 @@ class GilgameshAI {
 
     calculateMove(state) {
         const searchDepth = this.depth;//2;
+
+        
+    if (Object.keys(state.possibleMoves).length === 1) {//if only one possible move, return that move.
+      return Object.keys(state.possibleMoves)[0]
+    }
+
+    if (Object.keys(state.possibleMoves).length === 0) {//if no possible move return move
+      return null;
+    }
+
         const tree = buildTree(state, searchDepth,this.playerColor)
         //console.log('tree',tree)
         //console.log('tree',tree.root.children);
@@ -32,7 +42,8 @@ class GilgameshAI {
 //console.log('tree.root.type',tree.root.nodeType)
        // tree.root.children.map((c,i)=>console.log('m',c.move,'value: ',c.value))
         //console.log('aiplayer',state.currentPlayer)
-        const max = tree.root.children.reduce((prev, current) => (prev.value > current.value) ? prev : current);
+        const max =   tree.root.children && tree.root.children.length > 0
+        ? tree.root.children.reduce((prev, current) => (prev.value > current.value) ? prev : current) :{};
         return max.move;
         /*
         console.log('in gilgamesh calcMove', state);
