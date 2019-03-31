@@ -4,34 +4,9 @@ import { Icons } from "grommet-icons";
 import SvgBoard from "./SVGBoard";
 import GilgameshAI from "../Ai/GilgameshAI";
 import RandomAI from "../Ai/RandomAI";
-import GudeaAI from "../Ai/GudeaAI"
+import GudeaAI from "../Ai/GudeaAI";
 import "./Game.css";
 import GameEngine from "../GameEngine";
-
-const initialState = {
-  currentPlayer: "w",
-  dice: [0, 0, 0, 0],
-  diceResult: 0,
-  possibleMoves: { "0": 0 },
-  board: [
-    { w: 7, b: 7 },
-    { w: 0, b: 0 },
-    { w: 0, b: 0 },
-    { w: 0, b: 0 },
-    { w: 0, b: 0 },
-    { w: 0, b: 0 },
-    { w: 0, b: 0 },
-    { w: 0, b: 0 },
-    { w: 0, b: 0 },
-    { w: 0, b: 0 },
-    { w: 0, b: 0 },
-    { w: 0, b: 0 },
-    { w: 0, b: 0 },
-    { w: 0, b: 0 },
-    { w: 0, b: 0 },
-    { w: 5, b: 0 }
-  ]
-};
 
 const WHITE = "w";
 const BLACK = "b";
@@ -59,10 +34,8 @@ class Game extends Component {
     }
 
     switch (this.props.aiType) {
-      case "nabu":
-        this.ai = new RandomAI(); //implement nabu
-        break;
-      case "gudea": this.ai = new GudeaAI(3, BLACK);
+      case "gudea":
+        this.ai = new GudeaAI(3, BLACK);
         break;
       case "gilgamesh":
         this.ai = new GilgameshAI(2);
@@ -70,23 +43,9 @@ class Game extends Component {
       case "random":
         this.ai = new RandomAI();
         break;
+      default:
     }
   }
-
-  /* moveStoneToSquare(color, from, to) {
-         //check if gameState
-         let board = this.state.gameState.board;
-         const otherColor = color === WHITE ? BLACK : WHITE;
-         board[from][color]--;
-         if (board[to][otherColor] === 1) {//if opponent has a stone
-             board[to][otherColor] = 0;
-             board[0][otherColor]++;
-         }
-         board[to][color] = 1
-         //  console.log('Board', board)
- 
-         this.setState({ gameState: { ...this.state.gameState, board } })
-     }*/
   renderUnmovedStones(color) {
     //  console.log(color + "-stone.png")
     if (this.state.gameState) {
@@ -96,15 +55,15 @@ class Game extends Component {
       for (let i = 0; i < stonesCount; i++) {
         stones.push(
           <img
-            className="boox"
+            alt=""
             onClick={() => console.log(color + "-stone")}
             src={color + "-stone.png"}
             style={{ marginRight: "2px", width: "50px", height: "50px" }}
             className={
               this.state.humanData.stoneColor === color &&
-                this.state.selectedStone === 0 &&
-                i === 0
-                ? " stone-glow"
+              this.state.selectedStone === 0 &&
+              i === 0
+                ? " stone-glow boox"
                 : ""
             }
           />
@@ -129,14 +88,13 @@ class Game extends Component {
   }
 
   renderFinishLineStones(color) {
-    //  console.log(color + "-stone.png")
     if (this.state.gameState) {
-      // console.log(' this.state.gameState', this.state.gameState.board)
       const stonesCount = this.state.gameState.board[15][color];
       let stones = [];
       for (let i = 0; i < stonesCount; i++) {
         stones.push(
           <img
+            alt=""
             className="box"
             src={color + "-stone.png"}
             style={{ marginRight: "2px", width: "50px", height: "50px" }}
@@ -185,12 +143,6 @@ class Game extends Component {
     }
   }
   rollDice() {
-    //dice are rolled in gameengine. Show dice first when user clicks roll dice
-    /*
-        const roll = Math.floor(Math.random() * 5);
-        this.setState({ gameState: { ...this.state.gameState, diceResult: roll } })
-        //TODO: update game state*/
-    //   this.makeAIMove();
     if (!this.state.humanDidRollDice) {
       this.setState({
         humanDidRollDice: true,
@@ -229,7 +181,7 @@ class Game extends Component {
       prevState.gameState !== this.state.gameState &&
       this.state.gameState.currentPlayer === "b"
     ) {
-      this.makeAIMove();
+      setTimeout(this.makeAIMove.bind(this), 100);
     }
     if (this.state.gameState && this.state.gameState.winner) {
       this.handleGameHasEnded();
@@ -239,34 +191,18 @@ class Game extends Component {
   makeAIMove() {
     const currenGameState = this.state.gameState;
     if (!currenGameState.winner) {
-      //this.setState({computerDice: currenGameState.diceResult})
       const move = this.ai.calculateMove(currenGameState);
-      // console.log('Ai move ', move)
       const newState = move
         ? this.gameEngine.takeTurn(BLACK, move)
         : this.gameEngine.voidTurn(BLACK);
-      // console.log('new state')
       if (newState) {
-        /* if (newState.currentPlayer === BLACK) {
-                     //Ai plays again
-                     this.makeAIMove();
-                     
-                 }*/
         this.setState({
           gameState: newState,
           computerDice: currenGameState.diceResult
         });
-        //human turn
         return true;
       }
-      console.log(
-        "makeAIMove failed",
-        newState,
-        "currentState",
-        currenGameState
-      );
-      alert("Ai move failed");
-
+      console.log("Ai move failed");
       return false;
     } else {
       this.handleGameHasEnded();
@@ -279,18 +215,13 @@ class Game extends Component {
   makeHumanMove(move) {
     const currenGameState = this.state.gameState;
     if (!currenGameState.winner) {
-      //console.log('move',move)
       const newState = this.gameEngine.takeTurn(WHITE, move);
-
-      // console.log('new state',newState)
       if (newState) {
         this.setState({ gameState: newState });
         this.endHumanTurn(newState);
-
         return true;
       }
       alert("false state");
-      //  console.log('false StatecurrenGameState', currenGameState)
       return false;
     } else {
       this.handleGameHasEnded();
@@ -313,12 +244,7 @@ class Game extends Component {
       this.setState({ selectedStone: position });
     }
   }
-  checkIfSquareHasStone(square) {
-    const gameState = this.state.gameState;
-  }
-
   onSquareClick(square) {
-    //  console.log('square',square)
     if (!this.state.humanDidRollDice) {
       console.log("you have to roll dice");
       return;
@@ -326,14 +252,12 @@ class Game extends Component {
     if (!square.includes("b")) {
       const squareIndex = parseInt(square.replace("b", "").replace("w", ""));
       const gameState = this.state.gameState;
-      const selectedStone = this.state.selectedStone; // ? parseInt(this.state.selectedStone): null;
+      const selectedStone = this.state.selectedStone;
       console.log(
         "gameState.board[squareIndex][WHITE] ",
         gameState.board[squareIndex]
       );
       if (gameState.board[squareIndex][WHITE] === 1 && squareIndex != 15) {
-        // check if square already has stone
-        //    console.log('in gameState.board[squareIndex][WHITE] === 1')
         this.selectStone(squareIndex);
         return;
       }
@@ -343,56 +267,32 @@ class Game extends Component {
         gameState.board[squareIndex][WHITE] > 0 &&
         squareIndex != 15
       ) {
-        //check if squareIndex is before selected square
         this.selectStone(squareIndex);
         return;
       }
       if (gameState && gameState.currentPlayer === WHITE) {
-        //if whites turn
-        //   console.log('in second if,this.state.selectedStone',selectedStone)
-
         if (selectedStone || selectedStone === 0) {
-          //if player has selected a stone
-          //console.log('in if selectedstone')
-
-          // console.log('\nstate.possibleMoves', gameState.possibleMoves)
-          console.log(
-            "gameState.possibleMoves[this.state.selectedStone] =",
-            gameState.possibleMoves[selectedStone],
-            "squareIndex",
-            squareIndex
-          );
           if (gameState.possibleMoves[selectedStone] === squareIndex) {
             const moveFrom = selectedStone;
             this.makeHumanMove(moveFrom);
-            // console.log('in legal move', selectedStone)
           } else {
-            console.log("illegal move");
             this.selectStone(null);
           }
-
-          // console.log('move from', selectedStone, 'moveto', squareIndex);
         } else if (
           (!selectedStone || selectedStone > 16) &&
           gameState.board[squareIndex][WHITE] > 0
         ) {
           // if no stone selected
-          //console.log('no stone selected', selectedStone)
           this.selectStone(squareIndex);
         }
       }
-      //  console.log('squareIndex', squareIndex)
-      //check if possible move
-      //this.selectStone(formatedSquare)
     }
   }
 
   positionDicesOnBoard() {
     let stonesOnBoard = [];
-
     if (this.state.gameState && this.state.gameState.board) {
       const board = Object.values(this.state.gameState.board);
-
       board.map((field, index) => {
         if (index !== 0 && index !== 15) {
           if (field.w > 0) {
@@ -401,7 +301,6 @@ class Game extends Component {
             const square = this[positionReference]
               ? this[positionReference].getBoundingClientRect()
               : false;
-
             let position;
             if (square) {
               position = {
@@ -409,14 +308,12 @@ class Game extends Component {
                 left: square.left + "px"
               };
             }
-
             stonesOnBoard.push(
               <img
-              className={
-                  this.state.selectedStone === index
-                  ? " stone-glow"
-                  : ""
-              }
+                alt=""
+                className={
+                  this.state.selectedStone === index ? " stone-glow" : ""
+                }
                 onClick={() => this.onSquareClick("" + index)}
                 src={"w-stone.png"}
                 style={{
@@ -448,6 +345,7 @@ class Game extends Component {
 
             stonesOnBoard.push(
               <img
+                alt=""
                 onClick={() => this.onSquareClick("" + index)}
                 src={"b-stone.png"}
                 style={{
@@ -478,7 +376,6 @@ class Game extends Component {
 
   render() {
     console.log("render.this.state", this.state);
-    console.log("this.props.aiType", this.props.aiType);
     const stonesOnBoard = this.positionDicesOnBoard();
     return (
       <div className="game-container">
@@ -489,9 +386,7 @@ class Game extends Component {
           onClick={this.props.goBack}
           style={{ position: "absolute", left: "14px", top: "14px" }}
         />
-
         {this.renderNotOnBoardStones(BLACK)}
-
         <SvgBoard
           onSquareClick={this.onSquareClick.bind(this)}
           setRef={(c, name) => {
@@ -504,5 +399,4 @@ class Game extends Component {
     );
   }
 }
-
 export default Game;
