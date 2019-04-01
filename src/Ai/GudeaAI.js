@@ -101,6 +101,26 @@ function boardUtility(state, aiColor) {
         utility -= playerStones * ut.v1;
       }
     }
+    if (index === 15) {
+      //not on board
+      if (enemyStones) {
+        //good if enemy has stones off board
+        utility -= enemyStones * ut.v1;
+      }
+      if (playerStones) {
+        //bad of player have stones off board
+        utility += playerStones * ut.v2;
+      }
+    }
+    if (
+      index === 1 &&
+      board[index][aiColor] > 0 &&
+      board[index + 1][aiColor] > 0 &&
+      board[index + 2][aiColor] > 0 &&
+      board[index + 3][aiColor] > 0
+    ) {
+      utility -= playerStones * ut.v3; //if own stones is blocking for each other
+    }
     if (index > 12) {
       //safe zone
       if (playerStones) {

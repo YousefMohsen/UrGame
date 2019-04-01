@@ -34,7 +34,7 @@ class App extends Component {
           <Button
             color="white"
             primary={true}
-            label="Gudea (Expectimax hard)"
+            label="Gudea (Expectimax - hard)"
             onClick={() => {
               this.setState({ enterGame: true, aiType: "gudea" });
             }}
@@ -44,7 +44,7 @@ class App extends Component {
           <Button
             color="white"
             primary={true}
-            label="Gilgamesh (Expectimax medium)"
+            label="Gilgamesh (Expectimax - medium)"
             onClick={() => {
               this.setState({ enterGame: true, aiType: "gilgamesh" });
             }}
@@ -54,7 +54,7 @@ class App extends Component {
           <Button
             color="white"
             primary={true}
-            label="Enkidu(Random player)"
+            label="Enkidu(Random player - easy)"
             onClick={() => {
               this.setState({ enterGame: true, aiType: "random" });
             }}
