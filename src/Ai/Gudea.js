@@ -9,7 +9,7 @@ function writeToJSON(data) {
     "./src/Ai/generatedTree.json",
     JSON.stringify(data),
     { flag: "w" },
-    function (err) {
+    function(err) {
       if (err) {
         console.log(err);
       }
@@ -27,20 +27,24 @@ class GudeaAI {
     ///if only one move return that move TODO
 
     //returns null if no possible moves
-    const searchDepth = this.depth; //2;
-    const tree = buildTree(state, searchDepth, this.color);
-    if (Object.keys(state.possibleMoves).length === 1) {//if only one possible move, return that move.
-      return Object.keys(state.possibleMoves)[0]
+
+    if (Object.keys(state.possibleMoves).length === 1) {
+      //if only one possible move, return that move.
+      return Object.keys(state.possibleMoves)[0];
     }
 
-    if (Object.keys(state.possibleMoves).length === 0) {//if no possible move return move
+    if (Object.keys(state.possibleMoves).length === 0) {
+      //if no possible move return move
       return null;
     }
+    const searchDepth = this.depth; //2;
+    const tree = buildTree(state, searchDepth, this.color);
+    writeToJSON(tree);
     const max =
       tree.root.children && tree.root.children.length > 0
         ? tree.root.children.reduce((prev, current) =>
-          prev.value > current.value ? prev : current
-        )
+            prev.value > current.value ? prev : current
+          )
         : {};
     return max.move;
     /*
@@ -150,20 +154,46 @@ function boardUtility(state, aiColor) {
     const playerStones = board[index][aiColor];
     const enemyStones = board[index][enemyColor];
     //divide to war zones /safe zones
+    if (index === 15) {
+      //not on board
+      if (enemyStones) {
+        //good if enemy has stones off board
+        utility -= enemyStones * ut.v1;
+      }
+      if (playerStones) {
+        //bad of player have stones off board
+        utility += playerStones * ut.v2;
+      }
+    }
+    if (
+      index === 1 &&
+      board[index][aiColor] > 0 &&
+      board[index + 1][aiColor] > 0 &&
+      board[index + 2][aiColor] > 0 &&
+      board[index + 3][aiColor] > 0
+    ) {
+      utility -= playerStones * ut.v3; //if own stones is blocking for each other
+    }
 
-    if (index === 0) {//not on board
-      if (enemyStones) {//good if enemy has stones off board
+    if (index === 0) {
+      //not on board
+      if (enemyStones) {
+        //good if enemy has stones off board
         utility += enemyStones * ut.v1;
       }
-      if (playerStones) {//bad of player have stones off board
+      if (playerStones) {
+        //bad of player have stones off board
         utility -= playerStones * ut.v1;
       }
     }
-    if (index > 12) {//safe zone
-      if (playerStones) {//good if player stones can make it to end safe zone
+    if (index > 12) {
+      //safe zone
+      if (playerStones) {
+        //good if player stones can make it to end safe zone
         utility += playerStones * ut.v1;
       }
-      if (enemyStones) {//good if player stones can make it to end safe zone
+      if (enemyStones) {
+        //good if player stones can make it to end safe zone
         utility -= playerStones * ut.v1;
       }
     }
@@ -172,13 +202,15 @@ function boardUtility(state, aiColor) {
       // console.log('playerStones',playerStones)
       if (index === 4 || index === 3) {
         //squares 3 and 4 are tactical good if enemy has many square at index<5
-     //   utility += ut.v2;
+        //   utility += ut.v2;
       }
-      if (index === 8) {//extra turn
+      if (index === 8) {
+        //extra turn
         //keep square 8
         utility += ut.v4;
       }
-      if (index === 4 || index === 14) {//extra turns
+      if (index === 4 || index === 14) {
+        //extra turns
         //extra turns
         utility += ut.v2;
       }
@@ -195,24 +227,28 @@ function boardUtility(state, aiColor) {
         utility -= enemyOneBehind * ut.v1 + enemyTwoBehind * ut.v1;
 
         // utility += index*ut.v1
-
-
       }
       if (enemyStones) {
         //own stone before enemy stones in danger area
         const playerStoneOneBehind = board[index - 1][aiColor]; //number of own stones on the square behinde
         const playerStoneTwoBehind = board[index - 2][aiColor]; //number of own stones on the #2 square behinde
         //utility += playerStoneOneBehind * ut.v1*getProbability(1) + playerStoneTwoBehind * ut.v1*getProbability(2);
-        utility += playerStoneOneBehind * ut.v1 * getProbability(1) + playerStoneTwoBehind * ut.v1 * getProbability(2);
+        utility +=
+          playerStoneOneBehind * ut.v1 * getProbability(1) +
+          playerStoneTwoBehind * ut.v1 * getProbability(2);
 
         //better if no enemy
-        utility -= (8 - (13 - index))
-        //betetr if enemy has feve stones    
+        utility -= 8 - (13 - index);
+        //betetr if enemy has feve stones
       }
     }
-    if ((index === 3 || index === 4) && (board[5][enemyColor] > 0) && playerStones > 0) {
-      //It is good if there is a playerstone at squares 3 or/and 4(safe zone) and there is enemy stones at squares 
-      utility += ut.v1
+    if (
+      (index === 3 || index === 4) &&
+      board[5][enemyColor] > 0 &&
+      playerStones > 0
+    ) {
+      //It is good if there is a playerstone at squares 3 or/and 4(safe zone) and there is enemy stones at squares
+      utility += ut.v1;
     }
   }
   return utility;
@@ -280,7 +316,7 @@ class Node {
         return this.minValue() + boardUtility(this.gameState, this.playerColor);
 
       case IS_CHANCE_NODE:
-        return this.expValue() + boardUtility(this.gameState, this.playerColor);;
+        return this.expValue() + boardUtility(this.gameState, this.playerColor);
       default:
         return 0;
     }

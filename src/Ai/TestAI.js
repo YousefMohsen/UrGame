@@ -42,7 +42,6 @@ const game = new Ur(7, 4, Ur.BLACK);
 //console.log('possibleState',possibleState)
 
 function oneMove() {
-  const ai = new GilgameshAI(3);
   const gudeaAi = new GudeaAI(3, BLACK); //new GilgameshAI(depth);
   const game = new Ur(7, 4, Ur.BLACK);
   // default: stones = 7, dice = 4, player = Ur.WHITE
@@ -51,7 +50,7 @@ function oneMove() {
   for (let index = 0; index < 20; index++) { }
   //console.log('initState:before',initState)
   let counter = 0;
-  while (!(counter > 5 && state.currentPlayer === "b")) {
+  while (!(counter > 7 && state.currentPlayer === "b")) {
     const rand = Math.floor(
       Math.random() * Object.keys(state.possibleMoves).length
     );
@@ -66,7 +65,7 @@ function oneMove() {
   const move = gudeaAi.calculateMove(state);
   console.log("move", move);
 }
-for (let index = 1; index < 10; index++) {
+for (let index = 1; index < 8; index++) {
   //  const element = array[index];
   gudeaVsGilgamesh(30, index)
   //randomVsAI(10,5);
@@ -238,7 +237,7 @@ function gudeaVsGilgamesh(games, depth) {
     games,
     "  Gudea( depth " + depth + ")  won:",
     blackWins,
-    " Gudea( depth " + depth + 1 + ") won:",
+    " Gudea( depth " +( depth + 1 )+ ") won:",
     whiteWins
   );
 }
