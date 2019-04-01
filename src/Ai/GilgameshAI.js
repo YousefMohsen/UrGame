@@ -51,7 +51,7 @@ export default class GilgameshAI {
           )
         : {};
     //writeToJSON(tree)
-    if (!max) alert("max is null", max);
+    if (!max) console.log("max is null", max);
     return max.move;
   }
 }

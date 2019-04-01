@@ -114,12 +114,12 @@ function boardUtility(state, aiColor) {
     }
     if (
       index === 1 &&
-      board[index][aiColor] > 0 &&
-      board[index + 1][aiColor] > 0 &&
-      board[index + 2][aiColor] > 0 &&
-      board[index + 3][aiColor] > 0
+      board[1][aiColor] > 0 &&
+      board[2][aiColor] > 0 &&
+      board[3][aiColor] > 0 &&
+      board[4][aiColor] > 0
     ) {
-      utility -= playerStones * ut.v3; //if own stones is blocking for each other
+      utility -= playerStones * ut.v2; //if own stones is blocking for each other
     }
     if (index > 12) {
       //safe zone
@@ -153,8 +153,10 @@ function boardUtility(state, aiColor) {
         //avoid danger
         const enemyOneBehind = board[index - 1][enemyColor]; //number of enemy stones on the square behinde
         const enemyTwoBehind = board[index - 2][enemyColor]; //number of enemy stones on the #2 square behinde
-        utility -= enemyOneBehind * ut.v1 + enemyTwoBehind * ut.v1;
 
+        if (index !== 8) {
+          utility -= enemyOneBehind * ut.v1 + enemyTwoBehind * ut.v1;
+        }
         // utility += index*ut.v1
         utility += (10 - (13 - index)) / 10;
       }
@@ -163,9 +165,12 @@ function boardUtility(state, aiColor) {
         const playerStoneOneBehind = board[index - 1][aiColor]; //number of own stones on the square behinde
         const playerStoneTwoBehind = board[index - 2][aiColor]; //number of own stones on the #2 square behinde
         //utility += playerStoneOneBehind * ut.v1*getProbability(1) + playerStoneTwoBehind * ut.v1*getProbability(2);
-        utility +=
+        if (index !== 8) {
+          utility +=
           playerStoneOneBehind * ut.v1 * getProbability(1) +
           playerStoneTwoBehind * ut.v1 * getProbability(2);
+        }
+
 
         //better if no enemy
         utility -= 8 - (13 - index);
