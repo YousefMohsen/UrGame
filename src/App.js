@@ -39,18 +39,7 @@ class App extends Component {
               this.setState({ enterGame: true, aiType: "gudea" });
             }}
             style={{ margin: "20px 0px", display: "block", width: "100%" }}
-          />
-
-          <Button
-            color="white"
-            primary={true}
-            label="Gilgamesh (Expectimax - medium)"
-            onClick={() => {
-              this.setState({ enterGame: true, aiType: "gilgamesh" });
-            }}
-            style={{ margin: "20px 0px", display: "block", width: "100%" }}
-          />
-
+          />    
           <Button
             color="white"
             primary={true}
@@ -76,7 +65,7 @@ class App extends Component {
     return (
       <React.Fragment>
         <img className="App-logo" src="w-stone.png" />
-        <h1 style={{ display: "block" }}>The Royale Game Of Ur </h1>
+        <h1 style={{ display: "block" }}>The Royal Game Of Ur </h1>
         <Button
           color="white"
           primary={true}

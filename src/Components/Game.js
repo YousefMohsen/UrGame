@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Button, Heading } from "grommet";
 import { Icons } from "grommet-icons";
 import SvgBoard from "./SVGBoard";
-import GilgameshAI from "../Ai/GilgameshAI";
 import RandomAI from "../Ai/RandomAI";
 import GudeaAI from "../Ai/GudeaAI";
 import "./Game.css";
@@ -36,9 +35,6 @@ class Game extends Component {
     switch (this.props.aiType) {
       case "gudea":
         this.ai = new GudeaAI(3, BLACK);
-        break;
-      case "gilgamesh":
-        this.ai = new GilgameshAI(2);
         break;
       case "random":
         this.ai = new RandomAI();
