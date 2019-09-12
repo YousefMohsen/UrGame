@@ -12,7 +12,7 @@ const stepsImages = ["/stonesTut1.png", "/diceTut1.png", "/boardTut1.png", "/boa
 // stones, dice,board, lucky stones
 class App extends Component {
   constructor(props) {
-    super()
+    super();
     this.state = {
       enterAIMenu: false,
       enterGame: false,
@@ -131,17 +131,21 @@ class App extends Component {
           <Button
             color="white"
             primary={true}
-            label='Gilgamesh (Expectimax AI1)'
-            onClick={() => { this.setState({ enterGame: true, aiType: 'gilgamesh' }) }}
-            style={{ margin: '20px 0px', display: 'block', width: '100%' }}
+            label="Gudea (Expectimax - hard)"
+            onClick={() => {
+              this.setState({ enterGame: true, aiType: "gudea" });
+            }}
+            style={{ margin: "20px 0px", display: "block", width: "100%" }}
           />
 
           <Button
             color="white"
             primary={true}
-            label='Gudea (Expectimax AI2)'
-            onClick={() => { this.setState({ enterGame: true, aiType: 'gudea' }) }}
-            style={{ margin: '20px 0px', display: 'block', width: '100%' }}
+            label="Gilgamesh (Expectimax - medium)"
+            onClick={() => {
+              this.setState({ enterGame: true, aiType: "gilgamesh" });
+            }}
+            style={{ margin: "20px 0px", display: "block", width: "100%" }}
           />
 
           {   /* <Button
@@ -166,14 +170,13 @@ class App extends Component {
             color="white"
             primary={true}
             label="Back"
-            onClick={() => { this.setState({ enterAIMenu: false }) }}
-            style={{ position: 'absolute', left: '14px', top: '14px' }}
+            onClick={() => {
+              this.setState({ enterAIMenu: false });
+            }}
+            style={{ position: "absolute", left: "14px", top: "14px" }}
           />
-
         </div>
-
-      )
-
+      );
     }
     return (
       <React.Fragment>
@@ -205,22 +208,16 @@ class App extends Component {
     )
   }
 
-
   renderFooter() {
-    return (
-      <div class="container">
-      </div>)
+    return <div class="container" />;
   }
   render() {
-    const content = this.renderContent()
+    const content = this.renderContent();
     const footer = this.renderFooter();
 
     return (
       <div className="App">
-        <header className="App-header">
-
-          {content}
-        </header>
+        <header className="App-header">{content}</header>
         {footer}
       </div>
     );
